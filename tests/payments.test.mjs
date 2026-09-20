@@ -6,6 +6,10 @@ import path from 'node:path';
 
 const dir = await mkdtemp(path.join(tmpdir(), 'atelie-payment-test-'));
 process.env.DATA_DIR = dir;
+// Keep automated tests isolated even when production credentials are configured locally.
+process.env.DATABASE_URL = '';
+process.env.POSTGRES_URL = '';
+process.env.VERCEL = '';
 process.env.VOIDPAY_PUBLIC_KEY = 'test-public';
 process.env.VOIDPAY_PRIVATE_KEY = 'test-secret';
 process.env.PUBLIC_BASE_URL = 'https://store.example.com';
