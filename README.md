@@ -14,7 +14,7 @@ Abra http://localhost:3000. Para validar: `npm run verify`.
 
 ## Publicar na Vercel
 
-1. Importe `kaduGplay/Ateli-Natal` na Vercel, branch `main`. Use o preset **Express** e Node.js **22.x**. A configuração de build já está em `vercel.json`; não escolha preset de site estático nem configure `public` como diretório de saída manualmente.
+1. Importe `kaduGplay/Ateli-Natal` na Vercel, branch `main`. Use o preset **Other** e Node.js **22.x**. `vercel.json` configura o build, publica `public/` na CDN e encaminha `/api/*` para a função Express em `api/index.ts`. Os scripts do navegador são gerados antes da publicação dos arquivos estáticos.
 2. Em **Storage / Marketplace**, conecte um PostgreSQL, por exemplo Neon. Disponibilize a URL de conexão com SSL como `DATABASE_URL` (ou `POSTGRES_URL`). Os dados de pedidos e pagamentos usam esse banco. A tabela é criada automaticamente na primeira operação.
 3. Nas variáveis de ambiente de **Production**, configure `VOIDPAY_PUBLIC_KEY` e `VOIDPAY_PRIVATE_KEY` com as chaves da sua conta. Elas estão no `.env` deste computador, que não é publicado.
 4. Configure `PUBLIC_BASE_URL` com o endereço HTTPS definitivo, por exemplo `https://sualoja.com`. Se omitido em produção, a aplicação usa `VERCEL_PROJECT_PRODUCTION_URL` quando disponível. O webhook de confirmação será `/api/webhooks/voidpay`.
