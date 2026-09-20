@@ -334,7 +334,7 @@ function initStickyCta(product: Product): void {
     el = document.createElement('div');
     el.id = 'pdpStickyCta';
     el.style.cssText =
-      'position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-top:1px solid #e2e8f0;padding:12px 16px;z-index:9990;display:flex;align-items:center;gap:16px;box-shadow:0 -10px 25px rgba(0,0,0,.05);transform:translateY(100%);transition:transform .4s cubic-bezier(.16,1,.3,1);font-family:Inter,sans-serif;';
+      'position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-top:1px solid #e2e8f0;padding:12px 16px;z-index:999;display:flex;align-items:center;gap:16px;box-shadow:0 -10px 25px rgba(0,0,0,.05);transform:translateY(100%);transition:transform .4s cubic-bezier(.16,1,.3,1);font-family:Inter,sans-serif;';
     document.body.appendChild(el);
   }
   el.innerHTML = `
