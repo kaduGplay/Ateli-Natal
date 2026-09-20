@@ -27,7 +27,7 @@ export interface PixelItem {
 
 const CURRENCY = 'BRL';
 let ready = false;
-let firstPageViewSent = false;
+let lastPageViewUrl = '';
 
 function loadFbevents(): void {
   if (window.fbq) return;
@@ -65,16 +65,14 @@ export const pixel = {
     loadFbevents();
     window.fbq?.('init', pixelId);
     ready = true;
-    firstPageViewSent = true;
+    lastPageViewUrl = location.href;
     track('PageView');
   },
 
   /** PageView em navegações internas (a vitrine é uma SPA por hash). */
   pageView(): void {
-    if (!firstPageViewSent) {
-      firstPageViewSent = true;
-      return;
-    }
+    if (!ready || lastPageViewUrl === location.href) return;
+    lastPageViewUrl = location.href;
     track('PageView');
   },
 
@@ -124,7 +122,8 @@ export const pixel = {
   },
 
   /** `orderId` vira eventID para deduplicar com a API de Conversões no futuro. */
-  purchase(orderId: string, items: PixelItem[], value: number): void {
+  purchase(orderId: string, items: PixelItem[], value: number): boolean {
+    if (!ready || !window.fbq) return false;
     track(
       'Purchase',
       {
@@ -137,5 +136,6 @@ export const pixel = {
       },
       orderId,
     );
+    return true;
   },
 };

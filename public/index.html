@@ -198,7 +198,7 @@
                 </button>
                 <div id="cartShippingFormWrapper" class="cart-shipping-form-wrapper" style="display: none;">
                     <div class="cart-shipping-form">
-                        <input type="text" id="cartCepInput" placeholder="00000-000" maxlength="9"
+                        <input type="text" id="cartCepInput" inputmode="numeric" placeholder="00000-000" maxlength="9"
                            
                             class="cart-cep-input">
                         <button data-action="cart-shipping-calc" class="cart-cep-btn">
@@ -570,7 +570,7 @@
                                         <button class="qty-btn"
                                             data-action="qty-dec"><i
                                                 class="ph ph-minus"></i></button>
-                                        <input type="number" id="pdpQty" value="1" min="1"
+                                        <input type="number" id="pdpQty" inputmode="numeric" value="1" min="1" step="1"
                                             style="width: 40px; text-align: center; border: none; font-weight: 600; font-size: 15px; color: #1e293b; background: transparent;">
                                         <button class="qty-btn" data-action="qty-inc"><i
                                                 class="ph ph-plus"></i></button>
@@ -685,7 +685,7 @@
                                 <strong>Calcular Frete e Prazo</strong>
                             </div>
                             <div class="pdp-shipping-form">
-                                <input type="text" id="pdpCep" placeholder="00000-000" maxlength="9"
+                                <input type="text" id="pdpCep" inputmode="numeric" placeholder="00000-000" maxlength="9"
                                    
                                     class="pdp-cep-input">
                                 <button type="button" id="btnCalcPdp" data-action="pdp-shipping-calc"
