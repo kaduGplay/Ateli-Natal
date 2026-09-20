@@ -33,5 +33,6 @@ export async function getSettings(): Promise<StoreSettings> {
     orderBumpDiscountPercent: 20,
     maxInstallments: 6,
     installmentMinValue: 50,
+    metaPixelId: '',
   });
 }

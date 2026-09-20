@@ -1,5 +1,5 @@
 import { Router, type NextFunction, type Request, type RequestHandler, type Response } from 'express';
-import type { ApiResponse, CheckoutRequest } from '../shared/types.js';
+import type { ApiResponse, CheckoutRequest, OrderSummary } from '../shared/types.js';
 import { onlyDigits, isValidCep } from '../shared/validation.js';
 import { config } from './config.js';
 import { HttpError } from './errors.js';
@@ -73,7 +73,14 @@ routes.get(
   api(async (req) => {
     const order = await getOrder(String(req.params.id));
     if (!order) throw new HttpError(404, 'Pedido não encontrado.');
-    return { orderId: order.id, status: order.status, trackingCode: order.trackingCode ?? null };
+    const summary: OrderSummary = {
+      orderId: order.id,
+      status: order.status,
+      trackingCode: order.trackingCode ?? null,
+      value: order.totals.payable,
+      items: order.items.map(({ productId, name, unitPrice, qty }) => ({ productId, name, unitPrice, qty })),
+    };
+    return summary;
   }),
 );
 

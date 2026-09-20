@@ -4,6 +4,7 @@ import { byId, esc, must, qs, qsa } from '../lib/dom';
 import { brl, discountPercent, getStoreSettings, installments } from '../lib/format';
 import { maskCep } from '../lib/masks';
 import { onlyDigits } from '../../shared/validation';
+import { pixel } from '../lib/pixel';
 import { openDrawer } from '../cart/drawer';
 import { cart } from '../cart/store';
 import { renderProductCard } from './product-card';
@@ -251,6 +252,7 @@ function renderProduct(product: Product): void {
   renderCrossSell(product);
   initStickyCta(product);
   void loadReviews(product.id);
+  pixel.viewContent({ id: product.id, name: product.name, price: product.price, qty: 1 }, product.category);
 }
 
 /** Abre a página do produto. Chamada pelo roteador depois de o catálogo estar carregado. */

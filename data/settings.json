@@ -9,5 +9,6 @@
   "pixDiscountPercent": 10,
   "orderBumpDiscountPercent": 20,
   "maxInstallments": 6,
-  "installmentMinValue": 50
+  "installmentMinValue": 50,
+  "metaPixelId": "1745355333180716"
 }

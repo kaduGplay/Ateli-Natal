@@ -3,6 +3,7 @@ import { byId, qs, qsa } from '../lib/dom';
 import { getStoreSettings, setStoreSettings, whatsappLink } from '../lib/format';
 import { esc } from '../lib/dom';
 import { bumpProducts } from '../cart/bumps';
+import { pixel } from '../lib/pixel';
 import { renderProductCard } from './product-card';
 import { state } from './state';
 
@@ -109,6 +110,7 @@ export async function loadCategories(): Promise<void> {
 export function filterByCategory(slug: string): void {
   qsa('#categoryStoriesList .story-item').forEach((item) => item.classList.toggle('active', item.dataset.cat === slug));
   renderProductGrid(slug);
+  if (slug !== 'all') pixel.viewCategory(slug);
 }
 
 export function renderProductGrid(category = 'all'): void {

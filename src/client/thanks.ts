@@ -1,47 +1,62 @@
+import { pixel } from './lib/pixel';
 import { api } from './lib/api';
-import { cart } from './cart/store';
-import { must } from './lib/dom';
+import { byId } from './lib/dom';
+import { getStoreSettings, setStoreSettings, whatsappLink } from './lib/format';
 
-const orderId = new URLSearchParams(location.search).get('orderId');
-let trackingCode = '';
-let confirmed = false;
+const params = new URLSearchParams(window.location.search);
+const orderId = params.get('order') ?? '';
+const trackingParam = params.get('tracking');
 
-async function refresh(): Promise<void> {
-  if (!orderId) {
-    must('paymentHeading').textContent = 'Pedido não informado';
-    must('paymentDescription').textContent = 'Abra a confirmação a partir do seu checkout.';
-    return;
+async function init(): Promise<void> {
+  const settings = await api.settings().catch(() => null);
+  if (settings) setStoreSettings(settings);
+  pixel.init(getStoreSettings().metaPixelId);
+
+  const summary = orderId ? await api.orderSummary(orderId).catch(() => null) : null;
+
+  const code = trackingParam ?? summary?.trackingCode ?? summary?.orderId ?? null;
+  const display = byId('trackCodeDisplay');
+  if (display) display.textContent = code ?? 'N/A';
+
+  const wpp = byId<HTMLAnchorElement>('btnWppProofSuccess');
+  if (wpp && getStoreSettings().whatsapp) {
+    wpp.href = whatsappLink('Olá! Acabei de realizar o pagamento e gostaria de enviar o comprovante.');
   }
-  try {
-    const order = await api.orderStatus(orderId);
-    if (order.status === 'paid') {
-      must('paymentHeading').textContent = 'Pagamento Confirmado!';
-      must('paymentDescription').textContent = 'Sua compra foi aprovada com sucesso. Seu pedido será preparado para envio.';
-      must('paymentIcon').className = 'ph-bold ph-check';
-      trackingCode = order.trackingCode ?? '';
-      must('trackCodeDisplay').textContent = trackingCode || order.orderId;
-      must('trackingLabel').textContent = trackingCode ? 'Código de Rastreio' : 'Número do Pedido';
-      must('copyTracking').textContent = trackingCode ? 'Copiar Código' : 'Copiar Número';
-      must('orderDetails').hidden = false;
-      if (!confirmed) {
-        confirmed = true;
-        cart.clear();
-        try { sessionStorage.removeItem('atelieCheckoutDraft'); sessionStorage.removeItem('atelieActivePix'); } catch { /* armazenamento opcional */ }
-      }
-      return;
+
+  byId('trackBtnCopy')?.addEventListener('click', () => void copyCode(code));
+  document.querySelector<HTMLElement>('[data-action="copy-track"]')?.addEventListener('click', () => void copyCode(code));
+
+  // Purchase só para pedido pago, uma única vez por pedido (evita repetir ao recarregar a página).
+  if (summary && summary.status === 'paid') {
+    const key = `pixelPurchase:${summary.orderId}`;
+    let alreadySent = false;
+    try {
+      alreadySent = localStorage.getItem(key) === '1';
+    } catch {
+      /* sem storage: dispara mesmo assim; o eventID evita duplicar no lado da Meta */
     }
-    must('paymentHeading').textContent = order.status === 'pending' ? 'Aguardando pagamento' : order.status === 'expired' ? 'Pix expirado' : 'Pagamento cancelado';
-    must('paymentDescription').textContent = order.status === 'pending' ? 'A confirmação aparecerá aqui assim que o pagamento for aprovado.' : 'Volte ao checkout para gerar uma nova cobrança.';
-    if (order.status !== 'pending') return;
-  } catch {
-    must('paymentHeading').textContent = 'Consultando pagamento';
-    must('paymentDescription').textContent = 'Não foi possível consultar agora. Tentaremos novamente em instantes.';
+    if (!alreadySent) {
+      pixel.purchase(
+        summary.orderId,
+        summary.items.map((i) => ({ id: i.productId, name: i.name, price: i.unitPrice, qty: i.qty })),
+        summary.value,
+      );
+      try {
+        localStorage.setItem(key, '1');
+      } catch {
+        /* ignorado */
+      }
+    }
   }
-  window.setTimeout(() => void refresh(), 5000);
 }
 
-must('copyTracking').addEventListener('click', async () => {
-  try { await navigator.clipboard.writeText(trackingCode || orderId || ''); must('copyTracking').textContent = 'Copiado!'; }
-  catch { must('copyTracking').textContent = 'Selecione e copie o código acima'; }
-});
-void refresh();
+async function copyCode(code: string | null): Promise<void> {
+  if (!code) return;
+  try {
+    await navigator.clipboard.writeText(code);
+  } catch {
+    /* ignorado */
+  }
+}
+
+void init();

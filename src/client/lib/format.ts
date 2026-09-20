@@ -16,6 +16,7 @@ let settings: StoreSettings = {
   orderBumpDiscountPercent: 20,
   maxInstallments: 6,
   installmentMinValue: 50,
+  metaPixelId: '',
 };
 
 export const getStoreSettings = (): StoreSettings => settings;

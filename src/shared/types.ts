@@ -67,6 +67,8 @@ export interface StoreSettings {
   orderBumpDiscountPercent: number;
   maxInstallments: number;
   installmentMinValue: number;
+  /** ID do Pixel da Meta (Facebook). Vazio desativa o rastreamento. */
+  metaPixelId: string;
 }
 
 export type CouponType = 'percent' | 'fixed';
@@ -208,6 +210,15 @@ export interface OrderPaymentResponse extends CheckoutResponse {
   status: PaymentStatus;
   items: Array<Pick<OrderItem, 'name' | 'variant' | 'unitPrice' | 'qty'>>;
   shipping: Pick<Order['shipping'], 'name' | 'deliveryDays'>;
+}
+
+export interface OrderSummary {
+  orderId: string;
+  status: PaymentStatus;
+  trackingCode: string | null;
+  /** Valor efetivamente pago (Pix) e itens, usados no evento Purchase. */
+  value: number;
+  items: Array<{ productId: string; name: string; unitPrice: number; qty: number }>;
 }
 
 export interface OrderStatusResponse {

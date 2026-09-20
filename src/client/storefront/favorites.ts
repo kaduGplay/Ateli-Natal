@@ -1,6 +1,7 @@
 import { byId, qsa } from '../lib/dom';
+import { pixel } from '../lib/pixel';
 import { renderProductCard } from './product-card';
-import { state } from './state';
+import { findProduct, state } from './state';
 
 const KEY = 'atelieNatalFavorites';
 
@@ -26,7 +27,10 @@ function updateButtons(id: string): void {
 }
 
 export function toggleFavorite(id: string): void {
-  items = isFavorite(id) ? items.filter((x) => x !== id) : [...items, id];
+  const adding = !isFavorite(id);
+  items = adding ? [...items, id] : items.filter((x) => x !== id);
+  const product = findProduct(id);
+  if (adding && product) pixel.addToWishlist({ id, name: product.name, price: product.price, qty: 1 });
   try {
     localStorage.setItem(KEY, JSON.stringify(items));
   } catch {

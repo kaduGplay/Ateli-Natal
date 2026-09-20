@@ -1,5 +1,6 @@
 import { byId, qsa } from '../lib/dom';
 import { openDrawer } from '../cart/drawer';
+import { pixel } from '../lib/pixel';
 import { renderFavorites } from './favorites';
 import { hideStickyCta, resetProductView, showProduct } from './pdp';
 
@@ -48,6 +49,7 @@ function navigate(): void {
     item.classList.toggle('active', href === route || (route === '#home' && (href === '/' || href === '#' || href === '#home')));
   });
 
+  pixel.pageView();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 

@@ -1,4 +1,5 @@
 import type { CartLine } from '../../shared/types';
+import { pixel } from '../lib/pixel';
 
 const KEY = 'atelieNatalCart';
 
@@ -48,6 +49,7 @@ export const cart = {
   add(input: AddToCartInput): void {
     const lineId = lineIdOf(input);
     const qty = Math.max(1, Math.floor(input.qty ?? 1));
+    pixel.addToCart({ id: input.productId, name: input.name, price: input.price, qty });
     const existing = lines.find((l) => l.lineId === lineId);
     if (existing) {
       commit(lines.map((l) => (l.lineId === lineId ? { ...l, qty: l.qty + qty } : l)));

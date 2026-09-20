@@ -6,6 +6,7 @@ import type {
   CheckoutRequest,
   CheckoutResponse,
   OrderStatusResponse,
+  OrderSummary,
   OrderPaymentResponse,
   Product,
   ReviewSummary,
@@ -53,6 +54,7 @@ export const api = {
   checkoutPix: (payload: CheckoutRequest) => post<CheckoutResponse>('/checkout/pix', payload),
   reissuePix: (id: string) => post<CheckoutResponse>(`/orders/${encodeURIComponent(id)}/reissue-pix`, {}),
   orderPayment: (id: string) => request<OrderPaymentResponse>(`/orders/${encodeURIComponent(id)}/payment`),
+  orderSummary: (id: string) => request<OrderSummary>(`/orders/${encodeURIComponent(id)}/summary`),
   orderStatus: (id: string) => request<OrderStatusResponse>(`/orders/${encodeURIComponent(id)}/status`),
   tracking: (query: string) => request<TrackingPackage[]>(`/tracking?q=${encodeURIComponent(query)}`),
 };
