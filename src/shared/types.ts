@@ -69,6 +69,8 @@ export interface StoreSettings {
   installmentMinValue: number;
   /** ID do Pixel da Meta (Facebook). Vazio desativa o rastreamento. */
   metaPixelId: string;
+  /** ID do pixel da UTMify. Vazio desativa. */
+  utmifyPixelId: string;
 }
 
 export type CouponType = 'percent' | 'fixed';

@@ -6,6 +6,8 @@ import { esc, installImageFallback, must, qsa } from '../lib/dom';
 import { brl, getStoreSettings, setStoreSettings } from '../lib/format';
 import { maskCep, maskCpf, maskPhone } from '../lib/masks';
 import { showMessage } from '../lib/modal';
+import { initAnalytics } from '../lib/analytics';
+import { pixel, type PixelItem } from '../lib/pixel';
 import { cart } from '../cart/store';
 import { addBump, bumpPrice, renderOrderBumps } from '../cart/bumps';
 import { startPix } from './pix';
@@ -194,6 +196,8 @@ function validateAddress(): boolean {
   if (!selected || loadingShipping || loadingAddress) { showMessage('Aguarde o cálculo e selecione uma forma de entrega.'); return false; }
   return true;
 }
+const pixelItems = (): PixelItem[] => cart.lines().map(l => ({ id: l.productId, name: l.name, price: l.price, qty: l.qty }));
+
 function goToStep(step: number): void {
   if (!ready) return;
   if (!cart.count()) { showMessage('Seu carrinho está vazio. Adicione um produto para continuar.'); return; }
@@ -209,6 +213,7 @@ function goToStep(step: number): void {
   });
   if (step === 2 && !selected && !loadingAddress && isValidCep(value('chkCep'))) void lookupCep(false);
   if (step === 3) must('reviewAddressText').innerHTML = `${esc(value('chkStreet'))}, ${esc(value('chkNumber'))} ${esc(value('chkComp'))}<br>${esc(value('chkNeighborhood'))} — ${esc(value('chkCity'))}, ${esc(value('chkState'))}<br>CEP: ${esc(value('chkCep'))}<br>${esc(selected?.name)} · ${esc(selected?.price === 0 ? 'Grátis' : brl(selected?.price ?? 0))}`;
+  if (step === 3) pixel.addPaymentInfo(pixelItems(), round(cart.total()));
   saveDraft();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -316,12 +321,14 @@ async function boot(): Promise<void> {
     const [catalog, settings] = await Promise.all([api.products(), api.settings()]);
     products = catalog;
     setStoreSettings(settings);
+    initAnalytics(settings);
     for (const line of [...cart.lines()]) {
       const p = products.find(p => p.id === line.productId && p.active && p.stock > 0);
       if (!p) cart.remove(line.lineId);
       else { line.price = line.isBump ? bumpPrice(p) : p.price; cart.setQty(line.lineId, Math.min(line.qty, p.stock)); }
     }
     ready = true;
+    if (cart.count() > 0) pixel.initiateCheckout(pixelItems());
     must<HTMLButtonElement>('btnStep1Submit').disabled = cart.count() === 0;
     renderCart();
     if (!cart.count()) display('chkSummaryContent', true);

@@ -17,6 +17,7 @@ let settings: StoreSettings = {
   maxInstallments: 6,
   installmentMinValue: 50,
   metaPixelId: '',
+  utmifyPixelId: '',
 };
 
 export const getStoreSettings = (): StoreSettings => settings;

@@ -1,16 +1,17 @@
+import { initAnalytics } from './lib/analytics';
 import { pixel } from './lib/pixel';
 import { api } from './lib/api';
 import { byId } from './lib/dom';
 import { getStoreSettings, setStoreSettings, whatsappLink } from './lib/format';
 
 const params = new URLSearchParams(window.location.search);
-const orderId = params.get('order') ?? '';
+const orderId = params.get('orderId') ?? params.get('order') ?? '';
 const trackingParam = params.get('tracking');
 
 async function init(): Promise<void> {
   const settings = await api.settings().catch(() => null);
   if (settings) setStoreSettings(settings);
-  pixel.init(getStoreSettings().metaPixelId);
+  initAnalytics(getStoreSettings());
 
   const summary = orderId ? await api.orderSummary(orderId).catch(() => null) : null;
 

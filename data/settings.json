@@ -10,5 +10,6 @@
   "orderBumpDiscountPercent": 20,
   "maxInstallments": 6,
   "installmentMinValue": 50,
-  "metaPixelId": "1745355333180716"
+  "metaPixelId": "1745355333180716",
+  "utmifyPixelId": "6a8a10f4e08f7866db223c66"
 }

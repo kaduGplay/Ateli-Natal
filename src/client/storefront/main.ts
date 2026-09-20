@@ -2,7 +2,7 @@ import { api } from '../lib/api';
 import { initActions, registerActions } from '../lib/actions';
 import { byId, installImageFallback, qsa } from '../lib/dom';
 import { showMessage } from '../lib/modal';
-import { pixel } from '../lib/pixel';
+import { initAnalytics } from '../lib/analytics';
 import { getStoreSettings } from '../lib/format';
 import { drawerActions, initDrawer, openDrawer, setDrawerCatalog } from '../cart/drawer';
 import { cart } from '../cart/store';
@@ -124,7 +124,7 @@ async function boot(): Promise<void> {
   try {
     // Configurações primeiro: o formato de parcelas/frete grátis depende delas.
     await loadSettings().catch(() => undefined);
-    pixel.init(getStoreSettings().metaPixelId);
+    initAnalytics(getStoreSettings());
     const [products, summaries] = await Promise.all([api.products(), api.reviewSummaries().catch(() => ({}))]);
     state.products = products;
     initMarketingToasts(products);

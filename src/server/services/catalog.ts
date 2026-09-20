@@ -34,5 +34,6 @@ export async function getSettings(): Promise<StoreSettings> {
     maxInstallments: 6,
     installmentMinValue: 50,
     metaPixelId: '',
+    utmifyPixelId: '',
   });
 }

@@ -2,7 +2,8 @@ import QRCode from 'qrcode';
 import type { OrderPaymentResponse } from '../shared/types';
 import { api, ApiError } from './lib/api';
 import { esc, must } from './lib/dom';
-import { brl } from './lib/format';
+import { initAnalytics } from './lib/analytics';
+import { brl, setStoreSettings } from './lib/format';
 
 let orderId = new URLSearchParams(location.search).get('orderId');
 let order: OrderPaymentResponse;
@@ -48,6 +49,7 @@ async function check(): Promise<void> {
 }
 
 async function boot(): Promise<void> {
+  void api.settings().then((s) => { setStoreSettings(s); initAnalytics(s); }).catch(() => undefined);
   if (!orderId) { set('pageNotice', 'Pedido não informado. Volte ao checkout para continuar.'); return; }
   try {
     order = await api.orderPayment(orderId);
