@@ -104,8 +104,11 @@
     </div>
 
     <!-- Logo Bar -->
-    <div class="logo-topbar-wrapper">
+    <header class="logo-topbar-wrapper" id="mainHeader">
         <div class="logo-topbar-inner">
+            <button class="hamburger-btn" aria-label="Abrir menu" data-action="menu-open">
+                <i class="ph ph-list"></i>
+            </button>
             <!-- Left: Nav Links (Desktop only) -->
             <div class="header-nav desktop-only">
                 <a href="#home" class="header-nav-link"><i class="ph ph-house-line"></i> Início</a>
@@ -136,7 +139,7 @@
                 </a>
             </div>
         </div>
-    </div>
+    </header>
 
     <!-- Carrinho Lateral (Drawer) -->
     <div class="cart-drawer-overlay" id="cartDrawerOverlay" data-action="cart-close"></div>
@@ -247,25 +250,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Header Section -->
-    <header class="header" id="mainHeader">
-        <div class="header-container">
-            <div class="header-top">
-                <!-- Hamburger Menu -->
-                <button class="hamburger-btn" aria-label="Menu"
-                    data-action="menu-open">
-                    <i class="ph ph-list"></i>
-                </button>
-
-                <div class="mobile-header-placeholder"></div>
-
-
-                <!-- Action Icons movidos para a top-bar -->
-            </div>
-
-        </div>
-    </header>
 
     <!-- Main Content Container (SPA Views) -->
     <main class="main-content">

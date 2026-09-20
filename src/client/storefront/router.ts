@@ -1,4 +1,4 @@
-import { byId, qs, qsa } from '../lib/dom';
+import { byId, qsa } from '../lib/dom';
 import { openDrawer } from '../cart/drawer';
 import { renderFavorites } from './favorites';
 import { hideStickyCta, resetProductView, showProduct } from './pdp';
@@ -42,9 +42,6 @@ function navigate(): void {
     view.style.display = key === route ? 'block' : 'none';
     view.classList.toggle('active-view', key === route);
   }
-
-  const headerTop = qs('.header-top');
-  if (headerTop) headerTop.style.display = route === '#produto' ? 'none' : '';
 
   qsa('.bottom-nav .nav-item').forEach((item) => {
     const href = item.getAttribute('href');

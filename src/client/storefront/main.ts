@@ -26,7 +26,10 @@ import { initTracking } from './tracking-view';
 registerActions({
   ...drawerActions,
   'menu-open': () => byId('mobileMenu')?.classList.add('active'),
-  'menu-close': () => byId('mobileMenu')?.classList.remove('active'),
+  'menu-close': (el) => {
+    byId('mobileMenu')?.classList.remove('active');
+    if (el instanceof HTMLAnchorElement && el.hash) window.location.hash = el.hash;
+  },
   'gift-open': openMysteryBox,
   'gift-close': closeWelcomeGift,
   'gift-copy': (el) => void copyText(el, byId('welcomeCouponCode')?.textContent?.trim() ?? ''),
