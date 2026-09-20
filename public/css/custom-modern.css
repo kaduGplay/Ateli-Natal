@@ -1,0 +1,456 @@
+/* Custom Modern CSS for E-commerce */
+
+/* 1. Global Reset & Typography */
+body {
+    background-color: #f7f9fa !important;
+    color: #333 !important;
+    font-family: 'Open Sans', 'Inter', -apple-system, sans-serif !important;
+}
+
+/* Hide Top Bar & Footer Social Icons */
+.barra-inicial, .redes-sociais {
+    display: none !important;
+}
+
+
+
+/* 2. Horizontal Category Menu (Fixing the messy gray grid) */
+.menu.superior {
+    background: #ffffff !important;
+    border-bottom: 1px solid #eaeaea !important;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02) !important;
+    padding: 15px 0 !important;
+}
+
+.menu.superior .nivel-um {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    gap: 12px;
+    padding: 5px 20px !important;
+    margin: 0;
+    scrollbar-width: none; /* Firefox */
+}
+
+.menu.superior .nivel-um::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+
+.menu.superior .nivel-um > li {
+    display: inline-flex !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    flex-shrink: 0;
+}
+
+.menu.superior .nivel-um > li > a {
+    display: block;
+    background: #f0f2f5 !important;
+    color: #444 !important;
+    padding: 12px 22px !important;
+    border-radius: 30px !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    box-shadow: none !important;
+}
+
+.menu.superior .nivel-um > li:hover > a {
+    background: #0a3b2c !important; /* Elegant Dark Green */
+    color: #ffffff !important;
+    box-shadow: 0 6px 12px rgba(10, 59, 44, 0.25) !important;
+    transform: translateY(-2px);
+}
+
+.menu.superior .nivel-um > li > a > i, .menu.superior .nivel-um > li > a > b {
+    display: none !important; /* Hide weird arrows from old theme */
+}
+
+/* Hide submenus for now to keep it clean */
+.menu.superior .nivel-dois {
+    display: none !important;
+}
+
+/* 3. Modern Product Cards */
+.listagem-item {
+    background: #ffffff !important;
+    border: 1px solid #f2f2f2 !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+    padding: 20px !important;
+    margin-bottom: 30px !important;
+}
+
+.listagem-item:hover {
+    transform: translateY(-8px) !important;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08) !important;
+}
+
+.listagem-item .imagem-produto {
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    border: none !important;
+}
+
+.listagem-item .imagem-produto img {
+    transition: transform 0.5s ease;
+}
+
+.listagem-item:hover .imagem-produto img {
+    transform: scale(1.06);
+}
+
+.listagem-item .info-produto {
+    text-align: left !important;
+    padding: 5px 0 !important;
+    border: none !important;
+}
+
+.listagem-item .nome-produto {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #1a1a1a !important;
+    line-height: 1.4 !important;
+    height: auto !important;
+    margin-bottom: 12px !important;
+    text-decoration: none !important;
+}
+
+.listagem-item:hover .nome-produto {
+    color: #c90000 !important;
+}
+
+.listagem-item .preco-produto {
+    font-size: 22px !important;
+    font-weight: 800 !important;
+    color: #c90000 !important; /* Bold Red for Christmas/Sales */
+    margin-top: 10px !important;
+}
+
+/* 4. Elegant Buttons */
+.botao-comprar, .botao.principal {
+    background: linear-gradient(135deg, #0a3b2c 0%, #115c45 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 30px !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    padding: 14px 24px !important;
+    box-shadow: 0 6px 15px rgba(10, 59, 44, 0.3) !important;
+    transition: all 0.3s ease !important;
+    width: 100% !important; /* Full width inside card */
+    box-sizing: border-box;
+    text-shadow: none !important;
+}
+
+.botao-comprar:hover, .botao.principal:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(10, 59, 44, 0.4) !important;
+    background: linear-gradient(135deg, #115c45 0%, #0a3b2c 100%) !important;
+}
+
+/* Header Adjustments */
+#cabecalho {
+    background: #ffffff !important;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+    border: none !important;
+    padding-bottom: 0 !important;
+}
+
+
+/* 5. Mobile Responsiveness */
+@media (max-width: 767px) {
+    /* Prevent horizontal scrolling issues */
+    body, html {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+        width: 100% !important;
+    }
+
+    /* Product Grid: 2 Columns on Mobile */
+    .listagem-linha > ul {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: space-between !important;
+        padding: 0 10px !important;
+        margin: 0 !important;
+        box-sizing: border-box;
+    }
+    
+    .listagem-linha > ul > li, .listagem-linha > ul > li.span3 {
+        width: calc(50% - 6px) !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        margin-bottom: 12px !important;
+        float: none !important;
+    }
+
+    .listagem-item {
+        padding: 10px !important;
+        border-radius: 12px !important;
+        margin-bottom: 0 !important;
+    }
+
+    .listagem-item .nome-produto {
+        font-size: 12px !important;
+        margin-bottom: 6px !important;
+    }
+
+    .listagem-item .preco-produto {
+        font-size: 19px !important;
+        font-weight: 800 !important;
+        margin-top: 5px !important;
+    }
+
+    .botao-comprar, .botao.principal {
+        padding: 10px 12px !important;
+        font-size: 11px !important;
+        border-radius: 20px !important;
+    }
+
+    /* --- Clean Mobile Header Redesign --- */
+    
+    /* 1. Remove the gray box surrounding the header */
+    #cabecalho, 
+    #cabecalho .conteiner, 
+    .inferior.row-fluid,
+    .busca-mobile,
+    .menu.superior {
+        background: #ffffff !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+
+    /* 2. Fix Top Shortcuts Bar */
+    .atalhos-mobile {
+        background: #ffffff !important;
+        border-bottom: 1px solid #eaeaea !important;
+        border-top: none !important;
+    }
+    
+    .atalhos-mobile ul {
+        display: flex !important;
+        justify-content: space-around !important;
+        padding: 10px 0 !important;
+    }
+    
+    .atalhos-mobile ul li a {
+        color: #333 !important;
+        font-size: 22px !important;
+        text-shadow: none !important;
+    }
+    
+    .atalhos-mobile ul li.fundo-principal {
+        background: transparent !important;
+    }
+
+    /* 3. Hide the ugly old hamburger menu completely */
+    .atalho-menu {
+        display: none !important;
+    }
+
+    /* 4. Elegant Search Bar */
+    .busca-mobile {
+        display: block !important;
+        width: 100% !important;
+        padding: 10px 15px !important;
+        box-sizing: border-box !important;
+    }
+    
+    .busca {
+        width: 100% !important;
+        margin: 0 !important;
+        border: none !important;
+    }
+    
+    .busca form {
+        display: flex !important;
+        width: 100% !important;
+        border-radius: 25px !important;
+        overflow: hidden !important;
+        border: 1px solid #ccc !important;
+        background: #fff !important;
+    }
+    
+    .busca input {
+        flex-grow: 1 !important;
+        margin: 0 !important;
+        border: none !important;
+        padding: 12px 15px !important;
+        font-size: 14px !important;
+        background: transparent !important;
+        color: #333 !important;
+    }
+    
+    .botao-busca {
+        width: 50px !important;
+        padding: 0 !important;
+        background: #0a3b2c !important; /* Elegant Green */
+        color: #fff !important;
+        border: none !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    /* 5. Fix Category Titles */
+    .titulo-categoria strong {
+        font-size: 18px !important;
+        text-align: center !important;
+        display: block !important;
+        margin: 20px 0 10px 0 !important;
+        color: #0a3b2c !important; 
+        line-height: 1.3 !important;
+    }
+    
+    /* Logo spacing */
+    .logo {
+        margin: 15px 0 !important;
+    }
+    .logo a img {
+        max-height: 60px !important;
+        width: auto !important;
+        margin: 0 auto !important;
+        display: block !important;
+    }
+
+    /* Fix Menu Superior Mobile specific padding */
+    .menu.superior .nivel-um {
+        padding: 10px 15px !important;
+        gap: 10px !important;
+    }
+
+    /* Footer adjustments */
+    #rodape {
+        text-align: center !important;
+    }
+    
+    #rodape .span3, #rodape .span4, #rodape .span6 {
+        width: 100% !important;
+        margin-bottom: 20px !important;
+        margin-left: 0 !important;
+    }
+}
+
+/* ==========================================================================
+   FAVORITES HORIZONTAL CARDS LAYOUT
+   ========================================================================== */
+#favoritos-view .products-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+@media (min-width: 768px) {
+    #favoritos-view .products-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+}
+
+#favoritos-view .product-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+    gap: 12px;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+#favoritos-view .product-image-link {
+    width: 90px;
+    height: 90px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#favoritos-view .product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#favoritos-view .product-info {
+    flex: 1;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#favoritos-view .product-title {
+    font-size: 14px;
+    margin-bottom: 4px;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+#favoritos-view .product-price-box {
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+#favoritos-view .current-price {
+    font-size: 16px;
+}
+
+#favoritos-view .old-price {
+    font-size: 12px;
+}
+
+#favoritos-view .installments {
+    display: none;
+}
+
+#favoritos-view .product-actions {
+    display: flex;
+    gap: 8px;
+    flex-direction: row;
+}
+
+#favoritos-view .product-actions .btn-buy {
+    font-size: 12px;
+    padding: 0 10px;
+    height: 36px;
+    border-radius: 6px;
+}
+
+#favoritos-view .product-actions .fav-btn {
+    width: 36px !important;
+    height: 36px !important;
+    flex: 0 0 36px !important;
+    border-radius: 6px !important;
+}
+
+#favoritos-view .badge-discount,
+#favoritos-view .badge-best-seller {
+    display: none;
+}
+
+@media (min-width: 992px) {
+    #favoritos-view .products-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+    }
+}

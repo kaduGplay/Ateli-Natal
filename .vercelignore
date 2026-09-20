@@ -1,0 +1,10 @@
+.git
+.env
+.env.*
+node_modules
+dist
+tests
+data/orders.json
+data/pix-attempts.json
+data/voidpay-events.json
+*.log

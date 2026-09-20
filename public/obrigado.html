@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido Confirmado - Ateliê Natal</title>
+    <link href="/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="/vendor/phosphor/regular/style.css">
+    <link rel="stylesheet" href="/vendor/phosphor/fill/style.css">
+    <link rel="stylesheet" href="/vendor/phosphor/bold/style.css">
+
+
+    <style>
+        body {
+            background: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .success-card {
+            background: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            max-width: 500px;
+            width: 100%;
+            border: 1px solid #e2e8f0;
+        }
+
+        .icon-wrapper {
+            width: 80px;
+            height: 80px;
+            background: rgba(34, 197, 94, 0.15);
+            color: #16a34a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 24px;
+            animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #0f172a;
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+
+        p {
+            font-size: 15px;
+            color: #475569;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .tracking-box {
+            background: #f0fdf4;
+            border: 2px dashed #bbf7d0;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+
+        .tracking-code {
+            font-size: 20px;
+            font-weight: 900;
+            color: #15803d;
+            letter-spacing: 2px;
+            font-family: monospace;
+            margin: 8px 0;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            background: #0a3b2c;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #166534;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="success-card">
+        <div class="icon-wrapper">
+            <i id="paymentIcon" class="ph-bold ph-clock"></i>
+        </div>
+        <h1 id="paymentHeading">Consultando pagamento</h1>
+        <p id="paymentDescription">Aguarde enquanto confirmamos o status do seu pedido.</p>
+
+        <div class="tracking-box" id="orderDetails" hidden>
+            <div
+                style="font-size: 13px; color: #16a34a; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <i class="ph-bold ph-package"></i> <span id="trackingLabel">Código de Rastreio</span>
+            </div>
+            <div class="tracking-code" id="trackCodeDisplay">CARREGANDO...</div>
+            <button id="copyTracking" type="button"
+                style="background:none; border:none; color:#15803d; font-size:13px; font-weight:600; cursor:pointer; text-decoration:underline; display: inline-flex; align-items: center; gap: 4px; justify-content: center; margin-top: 4px;"><i
+                    class="ph-bold ph-copy"></i> Copiar Código</button>
+        </div>
+
+        <!-- Banner Discreto WhatsApp Comprovante -->
+        <div id="wppProofNoticeSuccess"
+            style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 14px 16px; border-radius: 12px; margin-bottom: 24px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;">
+            <div
+                style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: #334155; font-weight: 600; line-height: 1.4;">
+                <i class="ph-fill ph-whatsapp-logo" style="font-size: 20px; color: #25D366; flex-shrink: 0;"></i>
+                <span>Deseja acelerar o despacho? Envie o comprovante de pagamento no WhatsApp para validação
+                    prioritária.</span>
+            </div>
+            <a id="btnWppProofSuccess"
+                role="button" aria-disabled="true" title="WhatsApp temporariamente indisponível" class="btn"
+                style="background: #25D366; color: #fff; border: none; font-size: 13px; padding: 10px 18px; width: auto; font-weight: 700; border-radius: 8px;">
+                <i class="ph-bold ph-whatsapp-logo" style="font-size: 16px;"></i> Enviar Comprovante no WhatsApp
+            </a>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+            <a href="/#rastreio" class="btn" style="background: #16a34a; border: 2px solid #16a34a;"><i
+                    class="ph-bold ph-magnifying-glass"></i> Rastrear Pedido Agora</a>
+            <a href="/" class="btn"
+                style="background: #f1f5f9; color: #0f172a; border: 2px solid #e2e8f0;">Continuar Comprando</a>
+        </div>
+    </div>
+
+    <script src="/js/thanks.js" defer></script>
+</body>
+
+</html>

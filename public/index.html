@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ateliê Natal - E-commerce Premium</title>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Phosphor Icons (Modern & Clean Icons) -->
+    <link rel="stylesheet" href="/vendor/phosphor/regular/style.css">
+    <link rel="stylesheet" href="/vendor/phosphor/fill/style.css">
+    <link rel="stylesheet" href="/vendor/phosphor/bold/style.css">
+
+    <!-- Custom CSS (Organizados em pasta) -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/custom-modern.css">
+    <link rel="stylesheet" href="/css/reviews.css">
+
+
+    </head>
+
+<body>
+    <!-- Splash Screen Global -->
+    <style>
+        #globalSplash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.4s ease-out;
+        }
+
+        .splash-logo {
+            width: 180px;
+            margin-bottom: 20px;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        .splash-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid rgba(139, 0, 0, 0.1);
+            border-top-color: var(--color-primary, #8b0000);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes progress-stripes {
+            from {
+                background-position: 1rem 0;
+            }
+
+            to {
+                background-position: 0 0;
+            }
+        }
+    </style>
+    <div id="globalSplash">
+        <img src="/uploads/logo.jpg" alt="Atelie Natal" class="splash-logo">
+        <div class="splash-spinner"></div>
+    </div>
+
+
+    <!-- Top Announcement Bar (Gatilho de Escassez) -->
+    <div class="top-bar">
+        <div class="top-bar-content" style="display: flex; justify-content: center; align-items: center;">
+            <p style="margin: 0;"></p>
+        </div>
+    </div>
+
+    <!-- Logo Bar -->
+    <div class="logo-topbar-wrapper">
+        <div class="logo-topbar-inner">
+            <!-- Left: Nav Links (Desktop only) -->
+            <div class="header-nav desktop-only">
+                <a href="#home" class="header-nav-link"><i class="ph ph-house-line"></i> Início</a>
+                <a href="#rastreio" class="header-nav-link track-order-link"><i class="ph-fill ph-package"></i> Rastrear
+                    Pedido</a>
+            </div>
+
+            <!-- Center: Logo -->
+            <a href="#home" class="logo logo-center">
+                <img src="/uploads/logo.jpg" alt="Ateliê Natal Logo">
+            </a>
+
+            <!-- Right: Action Icons -->
+            <div class="header-actions">
+                <a href="#home" class="action-btn desktop-only" aria-label="Buscar"
+                    data-action="soon" data-msg="Busca em breve.">
+                    <i class="ph ph-magnifying-glass"></i>
+                </a>
+                <a href="#favoritos" class="action-btn desktop-only" aria-label="Favoritos">
+                    <i class="ph ph-heart"></i>
+                </a>
+                <a href="#login" class="action-btn desktop-only" aria-label="Minha Conta">
+                    <i class="ph ph-user"></i>
+                </a>
+                <a href="#" data-action="cart-toggle" class="action-btn cart-btn" aria-label="Carrinho">
+                    <i class="ph ph-shopping-cart"></i>
+                    <span class="cart-badge">0</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carrinho Lateral (Drawer) -->
+    <div class="cart-drawer-overlay" id="cartDrawerOverlay" data-action="cart-close"></div>
+    <div class="cart-drawer" id="cartDrawer">
+        <!-- Header -->
+        <div class="cart-drawer-header">
+            <div class="cart-drawer-header-left">
+                <div class="cart-drawer-icon-wrap">
+                    <i class="ph ph-shopping-cart-simple"></i>
+                </div>
+                <div>
+                    <h3>Meu Carrinho</h3>
+                    <span id="cartDrawerCount">0 itens</span>
+                </div>
+            </div>
+            <button class="cart-drawer-close" data-action="cart-close">
+                <i class="ph ph-x"></i>
+            </button>
+        </div>
+
+        <!-- Scrollable Body: Products list + Shipping + Order Bump -->
+        <div class="cart-drawer-body">
+            <!-- Barra de Frete Grátis -->
+            <div id="freeShippingProgressContainer"
+                style="display: none; padding: 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+                    <span id="freeShippingText" style="font-size: 13px; font-weight: 500; color: #334155;">Faltam
+                        <strong style="color: #059669;">R$ 150,00</strong> para Frete Grátis!</span>
+                    <i class="ph-fill ph-truck" style="color: #059669; font-size: 20px;"></i>
+                </div>
+                <div
+                    style="width: 100%; height: 8px; background: #f1f5f9; border-radius: 10px; overflow: hidden; position: relative;">
+                    <div id="freeShippingBar"
+                        style="width: 0%; height: 100%; background: linear-gradient(90deg, #34d399, #059669); border-radius: 10px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative;">
+                        <div
+                            style="content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent); background-size: 1rem 1rem; animation: progress-stripes 1s linear infinite;">
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 12px;">
+                    <i class="ph-fill ph-clock" id="promoIcon" style="color: #64748b; font-size: 14px;"></i>
+                    <p id="freeShippingPromoText" style="margin: 0; font-size: 12px; color: #64748b; font-weight: 500;">
+                        Aproveite o nosso Envio Expresso Especial!</p>
+                </div>
+            </div>
+
+            <div id="cartDrawerItems">
+                <!-- Renderizado via JS -->
+            </div>
+
+            <!-- Calculadora de Frete -->
+            <div class="cart-shipping-box" style="margin-top: 15px;">
+                <button class="cart-shipping-toggle-btn"
+                    data-action="cart-shipping-toggle">
+                    <i class="ph ph-package"></i> Calcular Frete e Prazo <i class="ph ph-caret-down"></i>
+                </button>
+                <div id="cartShippingFormWrapper" class="cart-shipping-form-wrapper" style="display: none;">
+                    <div class="cart-shipping-form">
+                        <input type="text" id="cartCepInput" placeholder="00000-000" maxlength="9"
+                           
+                            class="cart-cep-input">
+                        <button data-action="cart-shipping-calc" class="cart-cep-btn">
+                            <i class="ph ph-magnifying-glass"></i>
+                        </button>
+                    </div>
+                    <div id="cartShippingResult" class="cart-shipping-result"></div>
+                </div>
+            </div>
+
+            <!-- Order Bump Dinâmico -->
+            <div id="cartOrderBumpContainer"></div>
+        </div>
+
+        <!-- Footer: Subtotal + Checkout (Fixed) -->
+        <div class="cart-drawer-footer" id="cartDrawerFooter">
+            <div class="cart-totals-box">
+                <div class="cart-subtotal-row">
+                    <span>Subtotal</span>
+                    <span id="cartDrawerSubtotal">R$ 0,00</span>
+                </div>
+                <div class="cart-total-row">
+                    <span>Total</span>
+                    <strong id="cartDrawerTotal">R$ 0,00</strong>
+                </div>
+            </div>
+
+            <div class="cart-checkout-section">
+                <button
+                    data-action="go-checkout"
+                    class="cart-checkout-btn">
+                    <i class="ph ph-lock-key"></i>
+                    <span>Ir para o Checkout</span>
+                    <i class="ph ph-arrow-right cart-checkout-arrow"></i>
+                </button>
+                <p class="cart-checkout-security">
+                    <i class="ph ph-shield-check"></i> Compra 100% segura e criptografada
+                </p>
+            </div>
+            <button data-action="cart-close" class="cart-continue-btn">
+                <i class="ph ph-arrow-left"></i> Continuar Comprando
+            </button>
+
+            <!-- Trust badges -->
+            <div class="cart-trust-row">
+                <div class="cart-trust-item"><i class="ph ph-shield-check"></i><span>Compra Segura</span></div>
+                <div class="cart-trust-item"><i class="ph ph-credit-card"></i><span>Parcelamos em 6x</span></div>
+                <div class="cart-trust-item"><i class="ph ph-truck"></i><span>Frete para BR</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="header" id="mainHeader">
+        <div class="header-container">
+            <div class="header-top">
+                <!-- Hamburger Menu -->
+                <button class="hamburger-btn" aria-label="Menu"
+                    data-action="menu-open">
+                    <i class="ph ph-list"></i>
+                </button>
+
+                <div class="mobile-header-placeholder"></div>
+
+
+                <!-- Action Icons movidos para a top-bar -->
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Main Content Container (SPA Views) -->
+    <main class="main-content">
+
+        <!-- ==================== VIEW 1: HOME ==================== -->
+        <div id="home-view" class="spa-view">
+            <!-- Hero Banner -->
+            <section class="hero-banner" style="margin-top: 10px;">
+                <div class="banner-carousel">
+                    <div class="banner-track" id="bannerTrack">
+                        <!-- Renderizado via JS -->
+                    </div>
+                    <button class="carousel-btn prev" data-action="carousel-prev"><i
+                            class="ph ph-caret-left"></i></button>
+                    <button class="carousel-btn next" data-action="carousel-next"><i
+                            class="ph ph-caret-right"></i></button>
+                    <div class="carousel-dots" id="bannerDots">
+                        <!-- Renderizado via JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stories-style Category Navigation -->
+            <nav class="stories-category-nav">
+                <div class="stories-container" id="categoryStoriesList">
+                    <div class="story-item active" data-cat="all" data-action="filter-category" data-cat="all">
+                        <div class="story-avatar">
+                            <div class="story-ring">
+                                <img src="/uploads/logo.jpg" alt="Todos" id="imgCatTodos">
+                            </div>
+                        </div>
+                        <span class="story-name">Todos</span>
+                    </div>
+                    <!-- Skeletons -->
+                    <div class="story-item">
+                        <div class="story-avatar skeleton-img"
+                            style="border-radius:50%; width:60px; height:60px; padding:0; background:#f1f5f9; animation: shimmer 1.5s infinite linear;">
+                        </div><span class="story-name skeleton-text"
+                            style="width:40px; margin-top:5px; height:10px;"></span>
+                    </div>
+                    <div class="story-item">
+                        <div class="story-avatar skeleton-img"
+                            style="border-radius:50%; width:60px; height:60px; padding:0; background:#f1f5f9; animation: shimmer 1.5s infinite linear;">
+                        </div><span class="story-name skeleton-text"
+                            style="width:40px; margin-top:5px; height:10px;"></span>
+                    </div>
+                    <div class="story-item">
+                        <div class="story-avatar skeleton-img"
+                            style="border-radius:50%; width:60px; height:60px; padding:0; background:#f1f5f9; animation: shimmer 1.5s infinite linear;">
+                        </div><span class="story-name skeleton-text"
+                            style="width:40px; margin-top:5px; height:10px;"></span>
+                    </div>
+                    <div class="story-item">
+                        <div class="story-avatar skeleton-img"
+                            style="border-radius:50%; width:60px; height:60px; padding:0; background:#f1f5f9; animation: shimmer 1.5s infinite linear;">
+                        </div><span class="story-name skeleton-text"
+                            style="width:40px; margin-top:5px; height:10px;"></span>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mais Vendidos Section (Logo abaixo das categorias) -->
+            <section class="showcase best-sellers-section" id="bestSellersSection" style="display:none;">
+                <div class="showcase-header"
+                    style="display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 16px;">
+                    <div>
+                        <div
+                            style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #111111 0%, #222222 100%); color: #d4af37; padding: 4px 10px; border-radius: 4px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; border: 1px solid rgba(212, 175, 55, 0.3); box-shadow: 0 4px 12px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.05);">
+                            <i class="ph-fill ph-star"
+                                style="filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.4)); font-size: 10px;"></i>
+                            DESTAQUES
+                        </div>
+                        <h2
+                            style="font-size: 24px; font-weight: 800; color: var(--text-primary); margin: 0; line-height: 1.1; letter-spacing: -0.5px;">
+                            Mais Vendidos</h2>
+                        <p
+                            style="font-size: 14px; color: var(--text-secondary); margin: 6px 0 0 0; font-weight: 400; opacity: 0.8;">
+                            Os produtos preferidos dos clientes</p>
+                    </div>
+                    <a href="#home" class="view-all" data-action="filter-category" data-cat="all"
+                        style="background: transparent; padding: 6px 0; display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--text-primary); border-radius: 0; transition: opacity 0.3s;">Ver
+                        todos <i class="ph ph-arrow-right"></i></a>
+                </div>
+                <div class="best-sellers-grid" id="bestSellersGrid">
+                    <!-- Skeletons -->
+                    <article class="product-card skeleton-card best-seller-card">
+                        <div class="skeleton-img" style="height: 180px;"></div>
+                        <div class="product-info">
+                            <div class="skeleton-text skeleton-title"></div>
+                            <div class="skeleton-text skeleton-price"></div>
+                        </div>
+                    </article>
+                    <article class="product-card skeleton-card best-seller-card">
+                        <div class="skeleton-img" style="height: 180px;"></div>
+                        <div class="product-info">
+                            <div class="skeleton-text skeleton-title"></div>
+                            <div class="skeleton-text skeleton-price"></div>
+                        </div>
+                    </article>
+                    <article class="product-card skeleton-card best-seller-card">
+                        <div class="skeleton-img" style="height: 180px;"></div>
+                        <div class="product-info">
+                            <div class="skeleton-text skeleton-title"></div>
+                            <div class="skeleton-text skeleton-price"></div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- Showcase Section -->
+            <section class="showcase">
+                <div class="showcase-header">
+                    <h2>Lançamentos / Lote de Setembro</h2>
+                </div>
+
+                <!-- Product Grid -->
+                <div class="product-grid" id="mainProductGrid">
+                    <!-- Skeletons -->
+                    <article class="product-card skeleton-card">
+                        <div class="skeleton-img"></div>
+                        <div class="product-info">
+                            <div class="skeleton-text skeleton-title"></div>
+                            <div class="skeleton-text skeleton-price"></div>
+                            <div class="skeleton-text skeleton-installments"></div>
+                            <div class="skeleton-btn"></div>
+                        </div>
+                    </article>
+                    <article class="product-card skeleton-card">
+                        <div class="skeleton-img"></div>
+                        <div class="product-info">
+                            <div class="skeleton-text skeleton-title"></div>
+                            <div class="skeleton-text skeleton-price"></div>
+                            <div class="skeleton-text skeleton-installments"></div>
+                            <div class="skeleton-btn"></div>
+                        </div>
+                    </article>
+                    <article class="product-card skeleton-card">
+                        <div class="skeleton-img"></div>
+                        <div class="product-info">
+                            <div class="skeleton-text skeleton-title"></div>
+                            <div class="skeleton-text skeleton-price"></div>
+                            <div class="skeleton-text skeleton-installments"></div>
+                            <div class="skeleton-btn"></div>
+                        </div>
+                    </article>
+                    <article class="product-card skeleton-card">
+                        <div class="skeleton-img"></div>
+                        <div class="product-info">
+                            <div class="skeleton-text skeleton-title"></div>
+                            <div class="skeleton-text skeleton-price"></div>
+                            <div class="skeleton-text skeleton-installments"></div>
+                            <div class="skeleton-btn"></div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- Complete o Natal Section -->
+            <section class="showcase" id="bumpsSection" style="margin-top: 40px;">
+                <div class="showcase-header">
+                    <h2>Complete o Natal</h2>
+                    <p style="font-size: 13px; color: var(--text-secondary); margin: 4px 0 0 0;">Detalhes que fazem toda
+                        a diferença</p>
+                </div>
+                <div class="product-grid" id="bumpsProductGrid">
+                    <!-- Skeletons -->
+                    <article class="product-card skeleton-card">
+                        <div class="skeleton-img"></div>
+                        <div class="product-info">
+                            <div class="skeleton-text skeleton-title"></div>
+                            <div class="skeleton-text skeleton-price"></div>
+                            <div class="skeleton-text skeleton-installments"></div>
+                            <div class="skeleton-btn"></div>
+                        </div>
+                    </article>
+                    <article class="product-card skeleton-card">
+                        <div class="skeleton-img"></div>
+                        <div class="product-info">
+                            <div class="skeleton-text skeleton-title"></div>
+                            <div class="skeleton-text skeleton-price"></div>
+                            <div class="skeleton-text skeleton-installments"></div>
+                            <div class="skeleton-btn"></div>
+                        </div>
+                    </article>
+                    <article class="product-card skeleton-card">
+                        <div class="skeleton-img"></div>
+                        <div class="product-info">
+                            <div class="skeleton-text skeleton-title"></div>
+                            <div class="skeleton-text skeleton-price"></div>
+                            <div class="skeleton-text skeleton-installments"></div>
+                            <div class="skeleton-btn"></div>
+                        </div>
+                    </article>
+                    <article class="product-card skeleton-card">
+                        <div class="skeleton-img"></div>
+                        <div class="product-info">
+                            <div class="skeleton-text skeleton-title"></div>
+                            <div class="skeleton-text skeleton-price"></div>
+                            <div class="skeleton-text skeleton-installments"></div>
+                            <div class="skeleton-btn"></div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+
+            <!-- Trust Indicators Section Premium -->
+            <section class="trust-indicators">
+                <div class="trust-item">
+                    <div class="trust-icon-box">
+                        <i class="ph ph-truck"></i>
+                    </div>
+                    <div class="trust-text">
+                        <strong>Frete Rápido & Seguro</strong>
+                        <span>Entrega expressa para todo o Brasil</span>
+                    </div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon-box">
+                        <i class="ph ph-credit-card"></i>
+                    </div>
+                    <div class="trust-text">
+                        <strong>Parcele em até 6x</strong>
+                        <span>Sem juros no cartão de crédito</span>
+                    </div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon-box">
+                        <i class="ph ph-shield-check"></i>
+                    </div>
+                    <div class="trust-text">
+                        <strong>Compra 100% Segura</strong>
+                        <span>Seus dados totalmente protegidos</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== VIEW 2: PRODUTO ==================== -->
+        <div id="produto-view" class="spa-view" style="display: none;">
+            <div class="pdp-main" style="padding: 20px 0;">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding: 0 5%;">
+                    <button class="btn-outline"
+                        style="padding: 6px 12px; font-size: 13px; display: flex; align-items: center; gap: 6px;"
+                        data-action="back"><i class="ph ph-arrow-left"></i> Voltar</button>
+                    <nav class="breadcrumb" style="margin-bottom: 0;">
+                        <a href="#home">Início</a>
+                        <i class="ph ph-caret-right"></i>
+                        <a href="#home">Produtos</a>
+                        <i class="ph ph-caret-right"></i>
+                        <span id="pdpBreadcrumbName">Carregando...</span>
+                    </nav>
+                </div>
+
+                <div class="pdp-container">
+                    <!-- Left Column: Gallery -->
+                    <div class="pdp-gallery">
+                        <div class="main-image">
+                            <div class="badge-discount" style="display:none;"></div>
+                            <img id="pdpMainImg" src="" alt="Imagem do Produto">
+                            <video id="pdpMainVid" src="" controls playsinline
+                                style="display:none; width: 100%; max-height: 100%; object-fit: contain; border-radius: 12px;"></video>
+                        </div>
+                        <div class="thumbnails" id="pdpThumbnails">
+                            <!-- JS vai preencher as miniaturas aqui -->
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Info & Actions -->
+                    <div class="pdp-info">
+                        <div class="pdp-sku">SKU: ---</div>
+                        <div id="pdpSalesCount" class="badge-sales"
+                            style="display:none; font-size: 11px; background: #f1f5f9; color: #475569; padding: 4px 8px; border-radius: 4px; font-weight: 700; width: fit-content; margin-bottom: 8px;">
+                        </div>
+                        <h1 class="pdp-title">Carregando Produto...</h1>
+
+                        <div id="pdpUrgencyCopy"
+                            style="display:none; color: #b91c1c; font-weight: 700; margin: 0 0 12px 0; font-size: 12px; background: #fef2f2; padding: 6px 12px; border-radius: 50px; width: fit-content; border: 1px solid #fecaca; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                        </div>
+
+                        <div class="pdp-reviews">
+                            <div class="stars">
+                                <i class="ph-fill ph-star"></i>
+                                <i class="ph-fill ph-star"></i>
+                                <i class="ph-fill ph-star"></i>
+                                <i class="ph-fill ph-star"></i>
+                                <i class="ph-fill ph-star"></i>
+                            </div>
+                            <span>5.0 (0 avaliações)</span>
+                        </div>
+
+                        <div class="pdp-price-box"
+                            style="padding: 14px 16px; border-radius: 12px; box-shadow: none; border: 1px solid #e2e8f0; background: #fafafa;">
+                            <div class="old-price" style="display:none; font-size: 13px; margin-bottom: 2px;"></div>
+                            <div class="current-price"
+                                style="font-size: 30px; margin-bottom: 6px; letter-spacing: -0.5px;">R$ 0,00</div>
+                            <div class="pix-price" style="font-size: 14px; margin-bottom: 2px; color: #15803d;">ou
+                                <strong>R$ 0,00</strong> via Pix
+                            </div>
+                            <div class="installments" style="font-size: 13px;">Carregando parcelas...</div>
+                        </div>
+
+                        <ul id="pdpFeaturesList" class="features-list"
+                            style="display:none; list-style: none; padding: 0; margin: 12px 0 0 0; display: flex; flex-direction: column; gap: 6px;">
+                        </ul>
+
+                        <div id="pdpVariationsSection"
+                            style="display:none; margin: 15px 0; display: flex; flex-direction: column; gap: 16px;">
+                        </div>
+
+                        <div class="pdp-action"
+                            style="flex-direction: column; align-items: stretch; gap: 12px; margin-top: 10px;">
+                            <div style="display:flex; flex-direction:column; gap:8px;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="font-size: 13px; font-weight: 700; color: #475569;">Quantidade:</div>
+                                    <div class="qty-selector"
+                                        style="width: fit-content; border-radius: 8px; border: 1px solid #cbd5e1; height: 42px; display: flex; background: #fff;">
+                                        <button class="qty-btn"
+                                            data-action="qty-dec"><i
+                                                class="ph ph-minus"></i></button>
+                                        <input type="number" id="pdpQty" value="1" min="1"
+                                            style="width: 40px; text-align: center; border: none; font-weight: 600; font-size: 15px; color: #1e293b; background: transparent;">
+                                        <button class="qty-btn" data-action="qty-inc"><i
+                                                class="ph ph-plus"></i></button>
+                                    </div>
+                                </div>
+                                <div id="pdpFreeShippingBanner"
+                                    style="display:none; color: #065f46; background: #d1fae5; font-weight: 700; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 6px; width: fit-content; margin-top: 4px;">
+                                    <i class="ph ph-truck" style="font-size: 14px;"></i> MONTE O KIT E LEVE FRETE
+                                    GRÁTIS!
+                                </div>
+                            </div>
+
+                            <div id="pdpBrindeCard" class="brinde-card"
+                                style="display:none; border: 1px solid #fecdd3; background: #fff1f2; border-radius: 12px; padding: 12px; align-items: center; gap: 12px;">
+                                <div style="width: 60px; height: 60px; border-radius: 8px; border: 1px solid #fecdd3; background:#fff; display:flex; align-items:center; justify-content:center; font-size:28px;">🎁</div>
+                                <div style="flex: 1;">
+                                    <div
+                                        style="color: #b91c1c; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 2px;">
+                                        🎁 BRINDE ESPECIAL</div>
+                                    <div style="font-size: 13px; font-weight: 700; color: #4c0519;">Bandeja Organizadora
+                                        de Bambu</div>
+                                    <div style="font-size: 11px; color: #881337; line-height: 1.2; margin-top: 2px;">
+                                        Separe suas miçangas e monte sua árvore com muito mais facilidade.</div>
+                                </div>
+                                <div
+                                    style="text-align: center; border-left: 1px dashed #fecdd3; padding-left: 12px; padding-right: 5px;">
+                                    <div style="font-size: 9px; color: #881337;">INCLUSO</div>
+                                    <div style="font-size: 12px; font-weight: 800; color: #b91c1c;">GRÁTIS</div>
+                                </div>
+                            </div>
+
+                            <button id="pdpBtnAddCart" class="btn-buy pdp-btn-buy"
+                                style="background: #3f6212; width: 100%; border-radius: 8px; padding: 16px; font-weight: 700; letter-spacing: 0.5px; justify-content: center;">
+                                ADICIONAR Á SACOLA
+                            </button>
+
+                            <div
+                                style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+                                <div
+                                    style="font-size: 11px; font-weight: 600; color: #1e293b; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 12px;">
+                                    <i class="ph ph-credit-card"></i> FORMAS DE PAGAMENTO
+                                </div>
+                                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 6px;">
+                                    <div
+                                        style="border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px 8px; display: flex; align-items: center; justify-content: center; height: 32px; background: white;">
+                                        <img src="/img/pag1.png" style="height: 18px; width: auto;"
+                                            alt="Forma de Pagamento">
+                                    </div>
+                                    <div
+                                        style="border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px 8px; display: flex; align-items: center; justify-content: center; height: 32px; background: white;">
+                                        <img src="/img/pag2.png" style="height: 18px; width: auto;"
+                                            alt="Forma de Pagamento">
+                                    </div>
+                                    <div
+                                        style="border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px 8px; display: flex; align-items: center; justify-content: center; height: 32px; background: white;">
+                                        <img src="/img/pag3.png" style="height: 18px; width: auto;"
+                                            alt="Forma de Pagamento">
+                                    </div>
+                                    <div
+                                        style="border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px 8px; display: flex; align-items: center; justify-content: center; height: 32px; background: white;">
+                                        <img src="/img/pag4.png" style="height: 18px; width: auto;"
+                                            alt="Forma de Pagamento">
+                                    </div>
+                                    <div
+                                        style="border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px 8px; display: flex; align-items: center; justify-content: center; height: 32px; background: white;">
+                                        <img src="/img/pag5.png" style="height: 18px; width: auto;"
+                                            alt="Forma de Pagamento">
+                                    </div>
+                                    <div
+                                        style="border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px 8px; display: flex; align-items: center; justify-content: center; height: 32px; background: white;">
+                                        <img src="/img/pag6.png" style="height: 18px; width: auto;"
+                                            alt="Forma de Pagamento">
+                                    </div>
+                                    <div
+                                        style="border: 1px solid #e2e8f0; border-radius: 4px; padding: 4px 8px; display: flex; align-items: center; justify-content: center; height: 32px; background: white;">
+                                        <img src="/img/pag7.png" style="height: 18px; width: auto;"
+                                            alt="Forma de Pagamento">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="info-cards" style="display: flex; flex-direction: column; gap: 10px;">
+                                <div
+                                    style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; display: flex; align-items: flex-start; gap: 12px;">
+                                    <img src="/uploads/image.png" style="width: 24px; margin-top: 2px;" alt="Correios">
+                                    <div>
+                                        <div style="font-size: 13px; font-weight: 700; color: #1e293b;">Frete Grátis
+                                            <span style="font-weight: 400; color: #64748b;">Envio em 24 horas</span>
+                                        </div>
+                                        <div
+                                            style="font-size: 12px; color: #059669; font-weight: 600; margin-top: 2px;">
+                                            para todo o Brasil</div>
+                                    </div>
+                                </div>
+                                <div
+                                    style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; display: flex; align-items: flex-start; gap: 12px;">
+                                    <i class="ph ph-shield-check"
+                                        style="font-size: 24px; color: #1e293b; margin-top: 2px;"></i>
+                                    <div>
+                                        <div style="font-size: 13px; font-weight: 700; color: #1e293b;">Devoluções
+                                            Gratuitas</div>
+                                        <div style="font-size: 12px; color: #64748b; margin-top: 2px;">Estorno de 100%
+                                            do seu dinheiro<br>7 dias após o recebimento da mercadoria.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pdp-shipping">
+                            <div class="pdp-shipping-header">
+                                <i class="ph ph-truck"></i>
+                                <strong>Calcular Frete e Prazo</strong>
+                            </div>
+                            <div class="pdp-shipping-form">
+                                <input type="text" id="pdpCep" placeholder="00000-000" maxlength="9"
+                                   
+                                    class="pdp-cep-input">
+                                <button type="button" id="btnCalcPdp" data-action="pdp-shipping-calc"
+                                    class="pdp-cep-btn">
+                                    <i class="ph ph-magnifying-glass"></i> Calcular
+                                </button>
+                            </div>
+                            <div id="pdpShippingResult"></div>
+                        </div>
+
+                        <div class="pdp-trust">
+                            <div class="trust-icon">
+                                <i class="ph ph-shield-check"></i>
+                                <span>Compra Segura</span>
+                            </div>
+                            <div class="trust-icon">
+                                <i class="ph ph-package"></i>
+                                <span>Envio Rápido</span>
+                            </div>
+                            <div class="trust-icon">
+                                <i class="ph ph-arrows-left-right"></i>
+                                <span>Troca Facilitada</span>
+                            </div>
+                        </div>
+
+                        <div class="pdp-accordion">
+                            <details open>
+                                <summary>Ficha Técnica <i class="ph ph-caret-down"></i></summary>
+                                <div class="content" id="pdpFichaTecnicaContent">
+                                    <p>Carregando ficha técnica...</p>
+                                </div>
+                            </details>
+                            <details open>
+                                <summary>Descrição do Produto <i class="ph ph-caret-down"></i></summary>
+                                <div class="content" id="pdpDescriptionContent">
+                                    <p>Carregando descrição...</p>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Avaliações de clientes -->
+                <section class="showcase reviews-section" id="pdpReviewsSection" style="margin-top: 40px;">
+                    <div class="showcase-header" style="text-align:center; padding:0 20px;">
+                        <h2 style="font-size:24px; color:#1e293b;">Avaliações de clientes</h2>
+                        <div class="reviews-summary" id="pdpReviewsSummary"></div>
+                    </div>
+                    <div class="reviews-list" id="pdpReviewsList"></div>
+                </section>
+                <!-- Seção de Cross Sell Dinâmico -->
+                <section class="showcase" id="pdpCrossSellSection" style="display:none; margin-top: 60px;">
+                    <div class="showcase-header">
+                        <h2>Aproveite e leve junto</h2>
+                    </div>
+                    <div class="product-grid" id="pdpCrossSellGrid"></div>
+                </section>
+            </div>
+        </div>
+
+        <!-- ==================== VIEW 4: LOGIN ==================== -->
+        <div id="login-view" class="spa-view" style="display: none;">
+            <div class="login-main" style="padding: 20px 0;">
+                <h1 class="login-page-title">Acesse sua conta</h1>
+                <div class="login-container">
+
+                    <!-- Login Block -->
+                    <div class="auth-box login-box">
+                        <div class="auth-header">
+                            <h2>Já sou cliente</h2>
+                            <p>Faça login para acompanhar pedidos e comprar mais rápido.</p>
+                        </div>
+                        <form action="#" method="post" class="auth-form" id="loginForm">
+                            <div class="input-group">
+                                <label for="email_login">E-mail ou CPF</label>
+                                <div class="input-wrapper">
+                                    <i class="ph ph-envelope-simple"></i>
+                                    <input type="text" id="email_login" placeholder="Digite seu e-mail ou CPF" required>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="senha_login">Senha</label>
+                                <div class="input-wrapper">
+                                    <i class="ph ph-lock-key"></i>
+                                    <input type="password" id="senha_login" placeholder="Sua senha" required>
+                                </div>
+                            </div>
+                            <div class="forgot-password">
+                                <a href="#login">Esqueci minha senha</a>
+                            </div>
+                            <button type="submit" class="btn-buy auth-btn">Entrar na Conta</button>
+                        </form>
+                    </div>
+
+                    <!-- Register Block -->
+                    <div class="auth-box register-box">
+                        <div class="auth-header">
+                            <h2>Ainda não tenho conta</h2>
+                            <p>Crie sua conta e aproveite ofertas exclusivas de Natal.</p>
+                        </div>
+                        <form action="#" method="post" class="auth-form" id="registerForm">
+                            <div class="input-group">
+                                <label for="email_cadastro">E-mail</label>
+                                <div class="input-wrapper">
+                                    <i class="ph ph-envelope-simple"></i>
+                                    <input type="email" id="email_cadastro" placeholder="Digite seu melhor e-mail"
+                                        required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-buy auth-btn btn-outline">Criar Conta Agora</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- ==================== VIEW 5: RASTREIO ==================== -->
+        <div id="rastreio-view" class="spa-view" style="display: none;">
+            <div class="track-container">
+                <div class="track-header">
+                    <h1>Rastreie seu Pedido</h1>
+                    <p>Acompanhe a entrega da sua magia de Natal em tempo real.</p>
+                </div>
+
+                <form class="track-form" id="trackForm">
+                    <div class="track-input-group">
+                        <i class="ph ph-magnifying-glass"></i>
+                        <input type="text" id="trackingCodeInput" class="track-input"
+                            placeholder="Digite o código de rastreio ou CPF" required>
+                    </div>
+                    <button type="submit" class="btn-track" id="trackBtn">
+                        <span class="btn-text">Rastrear Agora <i class="ph ph-arrow-right"></i></span>
+                    </button>
+                </form>
+
+                
+
+                <div class="tracking-result" id="trackingResult" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- ==================== VIEW 6: FAVORITOS ==================== -->
+        <div id="favoritos-view" class="spa-view" style="display: none;">
+            <div class="container" style="padding-top: 40px; padding-bottom: 40px;">
+                <h2 style="text-align: center; margin-bottom: 20px; font-weight: 700;">Meus Favoritos</h2>
+                <div class="products-grid" id="favoritosGrid">
+                    <!-- Preenchido via JS -->
+                </div>
+                <div id="favoritosEmpty" style="display: none; text-align: center; padding: 40px 0;">
+                    <i class="ph ph-heart-break"
+                        style="font-size: 48px; color: #cbd5e1; margin-bottom: 16px; display: inline-block;"></i>
+                    <p style="color: #64748b; font-size: 16px;">Você ainda não tem nenhum produto favorito.</p>
+                    <a href="#home" class="btn-buy"
+                        style="display: inline-flex; align-items: center; justify-content: center; margin-top: 16px; width: auto; padding: 0 24px;">Explorar
+                        Produtos</a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer E-commerce Profissional -->
+    <footer class="footer">
+        <div class="footer-container">
+            <!-- Coluna 1: Marca e Contato -->
+            <div class="footer-col brand-col">
+                <div class="footer-logo">
+                    <span class="logo-text">Ateliê Natal</span>
+                </div>
+                <p class="brand-desc">Decorações natalinas exclusivas e artigos de luxo para transformar seu Natal.</p>
+                <div class="footer-socials">
+                    <a href="#" aria-label="Instagram"><i class="ph ph-instagram-logo"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="ph ph-facebook-logo"></i></a>
+                    <a href="https://wa.me/554791659343" target="_blank" aria-label="WhatsApp"><i
+                            class="ph ph-whatsapp-logo"></i></a>
+                </div>
+            </div>
+
+            <!-- Coluna 2: Ajuda e Suporte -->
+            <div class="footer-col">
+                <h4 class="footer-title">Institucional</h4>
+                <ul class="footer-links">
+                    <li><a href="#" data-action="soon" data-msg="Central de Atendimento em breve.">Fale Conosco</a></li>
+                    <li><a href="#" data-action="soon" data-msg="Política de Trocas e Devoluções em breve.">Trocas e Devoluções</a></li>
+                    <li><a href="#rastreio">Rastrear Pedido</a></li>
+                    <li><a href="#" data-action="soon" data-msg="Perguntas Frequentes em breve.">Dúvidas Frequentes</a></li>
+                </ul>
+            </div>
+
+            <!-- Coluna 3: Pagamento e Segurança -->
+            <div class="footer-col">
+                <h4 class="footer-title">Pagamento & Segurança</h4>
+
+                <div class="footer-pay-badges">
+                    <span class="pay-badge"><i class="ph ph-qr-code"></i> PIX</span>
+                    <span class="pay-badge"><i class="ph ph-credit-card"></i> Cartão em até 6x</span>
+                    <span class="pay-badge"><i class="ph ph-barcode"></i> Boleto</span>
+                </div>
+
+                <div class="footer-security-line">
+                    <i class="ph ph-shield-check"></i>
+                    <span>Compra 100% Segura com Criptografia SSL</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Ateliê Natal. Todos os direitos reservados. CNPJ: 00.000.000/0001-00</p>
+        </div>
+    </footer>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="#home" class="nav-item active">
+            <i class="ph-fill ph-house"></i>
+            <span>Início</span>
+        </a>
+        <a href="#rastreio" class="nav-item">
+            <i class="ph ph-package"></i>
+            <span>Rastrear</span>
+        </a>
+        <a href="#favoritos" class="nav-item">
+            <i class="ph ph-heart"></i>
+            <span>Favoritos</span>
+        </a>
+        <a href="#" data-action="cart-toggle" class="nav-item cart-nav">
+            <div class="icon-wrapper">
+                <i class="ph ph-shopping-bag"></i>
+                <span class="badge">0</span>
+            </div>
+            <span>Carrinho</span>
+        </a>
+        <a href="#login" class="nav-item">
+            <i class="ph ph-user"></i>
+            <span>Perfil</span>
+        </a>
+    </nav>
+
+    <style>
+        /* Exit-Intent Modal */
+        #exitIntentModal {
+            position: fixed;
+            inset: 0;
+            z-index: 999999;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            transition: opacity 0.3s;
+            opacity: 0;
+        }
+
+        #exitIntentModal.ei-visible {
+            opacity: 1;
+        }
+
+        #exitIntentModal .ei-box {
+            background: #fff;
+            border-radius: 20px;
+            max-width: 420px;
+            width: 100%;
+            padding: 36px 28px 28px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3);
+            transform: scale(0.85);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        #exitIntentModal.ei-visible .ei-box {
+            transform: scale(1);
+        }
+
+        #exitIntentModal .ei-close {
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            background: #f1f5f9;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+        }
+
+        .ei-coupon {
+            background: linear-gradient(135deg, #0a3b2c, #166534);
+            color: #fff;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .ei-coupon-code {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+
+        .ei-copy-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        @keyframes stockPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.85;
+                transform: scale(1.05);
+            }
+        }
+    </style>
+
+    <!-- Exit-Intent Modal -->
+    <div id="exitIntentModal" role="dialog" aria-modal="true" aria-labelledby="eiTitle">
+        <div class="ei-box">
+            <button class="ei-close" data-action="exit-close" aria-label="Fechar">&times;</button>
+            <div style="font-size:48px; margin-bottom:8px;">🎁</div>
+            <h2 id="eiTitle" style="font-size:22px; font-weight:900; color:#0a3b2c; margin:0 0 8px;">Espera! Temos um
+                presente para você</h2>
+            <p style="color:#475569; font-size:14px; margin:0 0 4px; line-height:1.5;">Antes de ir, use este cupom
+                exclusivo e garanta <strong>10% OFF</strong> na sua compra hoje:</p>
+            <div class="ei-coupon">
+                <span class="ei-coupon-code">SALVO10</span>
+                <button class="ei-copy-btn"
+                    data-action="copy-text" data-copy="SALVO10">Copiar</button>
+            </div>
+            <button data-action="exit-cart"
+                style="width:100%; padding:14px; background:#0a3b2c; color:#fff; border:none; border-radius:12px; font-weight:800; font-size:15px; cursor:pointer; margin-bottom:8px; display:flex; align-items:center; justify-content:center; gap:8px;"><i
+                    class="ph-bold ph-shopping-cart" style="font-size:18px;"></i> Ir para o Carrinho com
+                Desconto</button>
+            <button data-action="exit-close"
+                style="background:none; border:none; color:#94a3b8; font-size:13px; cursor:pointer; text-decoration:underline;">Não,
+                obrigado</button>
+        </div>
+    </div>
+
+    <!-- Mobile Sidebar Menu -->
+    <div class="mobile-menu-overlay" id="mobileMenu">
+        <div class="mobile-menu-content">
+            <div class="mobile-menu-header">
+                <h3>Menu</h3>
+                <button class="close-menu-btn" aria-label="Fechar"
+                    data-action="menu-close">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+            <ul class="mobile-menu-links">
+                <li><a href="#rastreio" data-action="menu-close"><i
+                            class="ph ph-package"></i> Rastrear Pedido</a></li>
+                <li><a href="#login" data-action="menu-close"><i
+                            class="ph ph-user"></i> Minha Conta</a></li>
+                <li><a href="#carrinho" data-action="menu-close"><i
+                            class="ph ph-shopping-cart"></i> Ver Carrinho</a></li>
+                <li><a href="#home" data-action="menu-close"><i
+                            class="ph ph-headset"></i> Fale Conosco</a></li>
+            </ul>
+            <div class="mobile-menu-footer">
+                <p>🎄 Ateliê Natal</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Welcome Gift Modal -->
+    <div id="welcomeGiftModal" class="welcome-gift-overlay" style="display: none;">
+        <div class="welcome-gift-content">
+            <button class="welcome-gift-close" data-action="gift-close"><i class="ph ph-x"></i></button>
+
+            <div id="welcomeGiftStep1" class="welcome-gift-step active">
+                <div class="welcome-gift-badge">Frete Grátis Liberado! 🚚</div>
+                <h2 class="welcome-gift-title">Você ganhou um presente!</h2>
+                <p class="welcome-gift-desc">Além do frete grátis para compras acima de <strong>R$ 150,00</strong>,
+                    temos uma surpresa para sua primeira compra.</p>
+
+                <div class="welcome-gift-mystery-box">
+                    <p>Toque na caixa mágica para revelar seu cupom:</p>
+                    <div class="mystery-box-animation" data-action="gift-open">
+                        <i class="ph-fill ph-gift"></i>
+                    </div>
+                    <button class="btn-buy" data-action="gift-open">Abrir Presente</button>
+                </div>
+            </div>
+
+            <div id="welcomeGiftStep2" class="welcome-gift-step">
+                <div class="welcome-gift-badge success">Parabéns! 🎉</div>
+                <h2 class="welcome-gift-title">Você ganhou <span class="highlight">10% OFF</span>!</h2>
+                <p class="welcome-gift-desc">Use o cupom abaixo no carrinho para garantir seu desconto exclusivo de
+                    boas-vindas.</p>
+
+                <div class="welcome-gift-coupon">
+                    <span id="welcomeCouponCode">BEMVINDO10</span>
+                    <button class="copy-coupon-btn" data-action="gift-copy">Copiar</button>
+                </div>
+                <button class="btn-buy" style="width: 100%; margin-top: 20px;" data-action="gift-close">Garantir Meu
+                    Desconto</button>
+            </div>
+        </div>
+    </div>
+                <!-- PIX content will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts da Aplicação (Organizados em pasta js/) -->
+    <script src="/js/store.js" defer></script>
+</body>
+
+</html>

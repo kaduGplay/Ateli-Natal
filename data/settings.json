@@ -1,0 +1,13 @@
+{
+  "storeName": "Ateliê Natal",
+  "topbarMessage": "<i class=\"ph-fill ph-truck\" style=\"margin-right: 6px;\"></i> Frete Grátis acima de R$ 150 para todo o Brasil",
+  "allCategoryImage": "/uploads/img_6a9ddef65bd20_1788731126.jpg",
+  "instagram": "",
+  "facebook": "https://www.facebook.com/profile.php?id=61593717704937",
+  "whatsapp": "554791659343",
+  "freeShippingThreshold": 150,
+  "pixDiscountPercent": 10,
+  "orderBumpDiscountPercent": 20,
+  "maxInstallments": 6,
+  "installmentMinValue": 50
+}

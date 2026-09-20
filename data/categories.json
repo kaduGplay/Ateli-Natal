@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "name": "Árvores de Natal",
+    "slug": "arvores",
+    "order": 1,
+    "active": true,
+    "avatar": "/uploads/img_6a9dec0eb1754_1788734478.png"
+  },
+  {
+    "id": 2,
+    "name": "Piscas e Luzes",
+    "slug": "piscas",
+    "order": 2,
+    "active": true,
+    "avatar": "/uploads/img_6a9dec1672c58_1788734486.png"
+  },
+  {
+    "id": 3,
+    "name": "Bolas de Enfeite",
+    "slug": "bolas",
+    "order": 3,
+    "active": true,
+    "avatar": "/uploads/img_6a9dec1f84993_1788734495.png"
+  },
+  {
+    "id": 4,
+    "name": "Guirlandas",
+    "slug": "guirlandas",
+    "order": 4,
+    "active": true,
+    "avatar": "/uploads/img_6a9dec27d66be_1788734503.png"
+  },
+  {
+    "id": 5,
+    "name": "Presépios",
+    "slug": "presepios",
+    "order": 5,
+    "active": true,
+    "avatar": "/uploads/img_6a9df037c8a92_1788735543.png"
+  },
+  {
+    "id": 6,
+    "name": "Casa e Decoração",
+    "slug": "decoracao",
+    "order": 6,
+    "active": true,
+    "avatar": "/uploads/img_6a9ded22d7c59_1788734754.png"
+  },
+  {
+    "id": 7,
+    "name": "Promoções",
+    "slug": "promocoes",
+    "order": 7,
+    "active": true,
+    "avatar": "/uploads/img_6a9ba5775467d_1788585335.webp"
+  }
+]

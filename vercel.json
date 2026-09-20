@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "express",
+  "buildCommand": "npm run build",
+  "installCommand": "npm ci",
+  "functions": {
+    "src/index.ts": {
+      "maxDuration": 60,
+      "includeFiles": "data/{catalog,categories,banners,settings,coupons,shipping,reviews}.json"
+    }
+  },
+  "headers": [
+    { "source": "/api/(.*)", "headers": [{ "key": "Cache-Control", "value": "no-store" }] },
+    { "source": "/(.*)", "headers": [{ "key": "X-Content-Type-Options", "value": "nosniff" }, { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }] },
+    { "source": "/pagamento.html", "headers": [{ "key": "Referrer-Policy", "value": "no-referrer" }] }
+  ]
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Pagar pedido com Pix — Ateliê Natal</title>
+  <link rel="stylesheet" href="/vendor/phosphor/regular/style.css">
+  <link rel="stylesheet" href="/vendor/phosphor/bold/style.css">
+  <link rel="stylesheet" href="/css/payment.css">
+  <script src="/js/payment.js" defer></script>
+</head>
+<body>
+  <header><a href="/" aria-label="Ateliê Natal — início"><img src="/uploads/logo.jpg" alt="Ateliê Natal"></a><span><i class="ph ph-lock-key"></i> Pagamento seguro</span></header>
+  <main>
+    <div class="intro"><span class="eyebrow">SÓ FALTA O PIX</span><h1>Seu Natal está quase pronto.</h1><p>Finalize o pagamento para confirmar seu pedido.</p></div>
+    <div id="pageNotice" class="notice" role="status">Carregando seu pedido...</div>
+    <div id="paymentContent" class="columns" hidden>
+      <section class="card pay-card" aria-labelledby="paymentTitle">
+        <div class="card-heading"><div class="pix-symbol"><i class="ph ph-qr-code"></i></div><div><h2 id="paymentTitle">Pague com Pix</h2><p>Escaneie ou copie o código abaixo</p></div></div>
+        <div class="amount-label">Valor a pagar</div><div id="paymentAmount" class="amount"></div>
+        <div id="expiry" class="expiry"><i class="ph ph-clock"></i> Código válido por <strong id="paymentCountdown">--:--</strong></div>
+        <div id="qrBox" class="qr-box"><img id="paymentQr" alt="QR Code Pix para pagar este pedido" hidden></div>
+        <label for="paymentCode">Pix copia e cola</label><textarea id="paymentCode" readonly rows="2" spellcheck="false"></textarea>
+        <button id="copyPayment" class="primary" type="button"><i class="ph ph-copy"></i> Copiar código Pix</button>
+        <p id="copyFeedback" class="copy-feedback" role="status"></p>
+        <div id="paymentStatus" class="payment-status" role="status"><span class="pulse"></span><span id="statusText">Aguardando pagamento</span></div>
+        <p id="paymentHelp" class="help">A confirmação será exibida aqui assim que o pagamento for identificado.</p>
+        <button id="checkPayment" class="secondary" type="button">Já paguei · verificar pagamento</button>
+        <a id="newPayment" class="secondary" href="/checkout.html" hidden>Voltar ao checkout</a>
+        <ol class="steps"><li>Abra o aplicativo do seu banco e escolha <strong>Pix</strong>.</li><li>Escaneie o QR Code ou use <strong>Pix copia e cola</strong>.</li><li>Confira o valor e confirme o pagamento no banco.</li></ol>
+      </section>
+      <aside class="card summary" aria-labelledby="orderTitle"><div class="summary-title"><i class="ph ph-shopping-bag"></i><h2 id="orderTitle">Seu pedido</h2></div><p class="order-number">Pedido <strong id="paymentOrderId"></strong></p><div id="paymentItems" class="items"></div>
+        <dl><div><dt>Subtotal</dt><dd id="paymentSubtotal"></dd></div><div id="couponRow"><dt>Desconto dos cupons</dt><dd id="paymentDiscount"></dd></div><div><dt>Frete</dt><dd id="paymentShipping"></dd></div><div class="discount"><dt>Desconto no Pix</dt><dd id="paymentPixDiscount"></dd></div><div class="total"><dt>Total a pagar</dt><dd id="paymentTotal"></dd></div></dl>
+        <div class="delivery"><i class="ph ph-truck"></i><span id="deliveryName"></span></div><p class="order-note">Guarde o número do pedido para acompanhar sua compra.</p>
+      </aside>
+    </div>
+    <a class="back" href="/checkout.html">← Voltar ao checkout</a>
+  </main>
+  <footer><i class="ph ph-shield-check"></i> Ateliê Natal · Pagamento via Pix</footer>
+</body>
+</html>

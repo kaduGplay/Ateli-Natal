@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Checkout - Ateliê Natal</title>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Phosphor Icons -->
+    <link rel="stylesheet" href="/vendor/phosphor/regular/style.css">
+    <link rel="stylesheet" href="/vendor/phosphor/fill/style.css">
+    <link rel="stylesheet" href="/vendor/phosphor/bold/style.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/custom-modern.css">
+
+
+    <style>
+        .email-suggestions { position:absolute; top:calc(100% + 4px); left:0; right:0; z-index:30; background:#fff; border:1px solid #dce5df; border-radius:10px; box-shadow:0 8px 24px #0a3b2c20; padding:4px; max-height:240px; overflow-y:auto; }
+        .email-suggestions[hidden] { display:none; }
+        .email-suggestions [role="option"] { padding:12px; min-height:44px; font-size:14px; color:#244d3c; cursor:pointer; overflow-wrap:anywhere; border-radius:6px; }
+        .email-suggestions [role="option"]:hover, .email-suggestions [aria-selected="true"] { background:#edf7f1; }
+
+        button:disabled { opacity:.55; cursor:wait; }
+        .shipping-description { flex:1; min-width:0; }
+        .shipping-badge { display:inline-block; background:#059669; color:#fff; font-size:10px; font-weight:800; border-radius:12px; padding:2px 6px; margin:3px 0 3px 5px; }
+        .shipping-promo { background:#0a3b2c; }
+        .shipping-date { font-size:11.5px; color:#64748b; margin-top:4px; }
+        .shipping-price { text-align:right; white-space:nowrap; color:#15803d; font-size:14px; margin-left:8px; }
+        .shipping-price small { display:block; text-decoration:line-through; color:#999; font-size:11px; }
+        .shipping-loading { padding:16px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:10px; font-size:13px; }
+        .shipping-loading i { display:inline-block; animation:spin .8s linear infinite; }
+        .checkout-coupon { display:inline-block; padding:5px 10px; margin:4px; border-radius:12px; background:#dcfce7; font-size:12px; }
+        .checkout-coupon button { border:0; background:none; cursor:pointer; }
+
+        body {
+            background-color: #f7f9fa;
+        }
+
+        /* Centralized Layout */
+        .checkout-page-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        .checkout-page-header {
+            background: #fff;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: center;
+            padding: 8px;
+        }
+
+        .checkout-page-header img {
+            max-width: 100px;
+        }
+
+        /* Countdown Timer */
+        .checkout-countdown {
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--color-primary);
+            border: 1px solid rgba(10, 59, 44, 0.15);
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            z-index: 9999;
+            backdrop-filter: blur(10px);
+            white-space: nowrap;
+        }
+
+        /* Summary override */
+        .checkout-sidebar {
+            width: 100%;
+            position: static;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            padding: 16px;
+            background: rgba(10, 59, 44, 0.02);
+            border-top: 4px solid var(--color-primary);
+            border-radius: 8px;
+        }
+
+        .checkout-sidebar h3 {
+            font-size: 15px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+        }
+
+        .chk-item {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+        }
+
+        .chk-item img {
+            width: 48px;
+            height: 48px;
+        }
+
+        .chk-summary-totals .line {
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .chk-summary-totals hr {
+            margin: 10px 0;
+        }
+
+        .chk-summary-totals .total {
+            font-size: 15px;
+        }
+
+        .chk-summary-totals .total strong {
+            font-size: 18px;
+        }
+
+        .trust-badges-chk {
+            margin-top: 16px;
+        }
+
+        .t-badge {
+            padding: 8px;
+            font-size: 11px;
+        }
+
+        /* Horizontal Progress */
+        .checkout-progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .checkout-progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 14px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(10, 59, 44, 0.1);
+            z-index: 1;
+        }
+
+        .progress-step {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            background: #f7f9fa;
+            padding: 0 10px;
+        }
+
+        .progress-step .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(10, 59, 44, 0.05);
+            color: var(--color-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            border: 3px solid #f7f9fa;
+            transition: all 0.3s;
+        }
+
+        .progress-step span.label {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(10, 59, 44, 0.6);
+        }
+
+        .progress-step.active .step-circle {
+            background: var(--color-primary);
+            color: #fff;
+            box-shadow: 0 0 0 3px rgba(10, 59, 44, 0.2);
+        }
+
+        .progress-step.active span.label {
+            color: var(--color-primary);
+        }
+
+        .progress-step.completed .step-circle {
+            background: var(--color-primary);
+            color: #fff;
+        }
+
+        .progress-step.completed span.label {
+            color: var(--color-primary);
+        }
+
+        /* Hide the old step titles since we have the horizontal progress now */
+        .step-title {
+            display: none !important;
+        }
+
+        /* Hide inactive steps completely so they don't create empty gaps */
+        .checkout-step:not(.active) {
+            display: none !important;
+        }
+
+        #checkout-view {
+            display: block !important;
+        }
+
+        .cart-drawer-overlay {
+            display: none !important;
+        }
+
+        .checkout-wrapper {
+            display: block;
+            padding: 0;
+            max-width: 100%;
+        }
+
+        .checkout-step {
+            border: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+    </head>
+
+<body>
+
+    <header class="checkout-page-header">
+        <a href="/"><img src="/uploads/logo.jpg" alt="Ateliê Natal Logo"></a>
+    </header>
+
+    <div class="checkout-page-container">
+
+        <!-- Timer movido para dentro do card step-1 (ver abaixo) -->
+
+        <!-- CHECKOUT (3 Etapas) -->
+        <div id="checkout-view">
+            <div class="checkout-wrapper">
+
+
+
+                <!-- Barra de Progresso Horizontal -->
+                <div class="checkout-progress-bar" style="margin-bottom: 20px;">
+                    <div class="progress-step active">
+                        <div class="step-circle">1</div>
+                        <span class="label">Identificação</span>
+                    </div>
+                    <div class="progress-step">
+                        <div class="step-circle">2</div>
+                        <span class="label">Entrega</span>
+                    </div>
+                    <div class="progress-step">
+                        <div class="step-circle">3</div>
+                        <span class="label">Pagamento</span>
+                    </div>
+                </div>
+
+                <!-- Resumo Acima (Antiga Sidebar) -->
+                <div class="checkout-sidebar"
+                    style="padding: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin-bottom: 8px;">
+                    <button type="button" data-action="summary-toggle" aria-expanded="false" aria-controls="chkSummaryContent"
+                        style="width:100%; display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:none; padding:16px; font-weight:700; color:var(--color-primary); cursor:pointer;">
+                        <span style="display:flex; align-items:center; gap:8px;"><i class="ph ph-shopping-cart"></i>
+                            Resumo do Pedido</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span id="chkSummaryTotalPreview" style="font-size:15px; color:var(--color-primary);">R$
+                                0,00</span>
+                            <i class="ph ph-caret-down" id="chkSummaryIcon" style="transition: transform 0.2s;"></i>
+                        </div>
+                    </button>
+
+                    <div id="chkSummaryContent" style="display:none; padding:16px; border-top:1px solid #e2e8f0;">
+                        <div id="chkSidebarItems" class="chk-sidebar-items">
+                            <!-- JS preenche -->
+                        </div>
+
+                        <div class="chk-summary-totals">
+                            <div class="line"><span>Subtotal</span> <strong id="chkSidebarSub">R$ 0,00</strong></div>
+                            <div id="chkSidebarDiscountLine" style="display:none;"></div>
+                            <div class="line"><span>Frete</span> <strong id="chkSidebarFreight">Calcular</strong></div>
+                            <hr>
+                            <div class="line total"><span>Total a Pagar</span> <strong id="chkSidebarTotal"
+                                    style="color:var(--color-primary);">R$ 0,00</strong></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cupom -->
+                <div class="checkout-coupon-container"
+                    style="margin-bottom: 8px; background: #fff; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    <h4
+                        style="font-size: 14px; margin: 0 0 12px 0; color: var(--color-primary); display: flex; align-items: center; gap: 6px;">
+                        <i class="ph ph-ticket"></i> Possui um cupom de desconto?</h4>
+                    <div id="appliedCouponsList" style="margin-bottom:8px;"></div>
+                    <div class="checkout-coupon-box" style="margin-bottom: 8px; display:flex; gap:8px;">
+                        <input type="text" id="chkCouponCode" placeholder="Insira seu cupom"
+                            style="flex:1; padding:10px 12px; border:1px solid #cbd5e1; border-radius:6px; font-size:14px; text-transform:uppercase; outline:none;">
+                        <button type="button" class="btn-primary" data-action="coupon-apply" id="btnApplyCoupon"
+                            style="padding:10px 16px; border-radius:6px; font-size:14px;">Aplicar</button>
+                    </div>
+                    <div id="couponMessage" style="font-size:13px; display:none;"></div>
+                </div>
+
+
+
+                <!-- Esquerda: Etapas -->
+                <div class="checkout-steps-container">
+
+                    <!-- Etapa 1: Identificação -->
+                    <div class="checkout-step active" id="step-1">
+                        <div class="step-title"></div>
+                        <div class="step-body">
+
+                            <!-- ★ CRO: Banner de Reserva no Topo do Card -->
+                            <div id="cro-reservation-banner" style="
+                                background: linear-gradient(135deg, #fff5f5 0%, #fff8f0 100%);
+                                border: 1.5px solid #fca5a5;
+                                border-radius: 10px;
+                                padding: 10px 16px;
+                                margin-bottom: 18px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                gap: 10px;
+                                animation: reserveBannerPulse 2s ease-in-out infinite;
+                            ">
+                                <div style="background: linear-gradient(135deg,#ef4444,#f97316); color:#fff; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0;">
+                                    <i class="ph-bold ph-clock"></i>
+                                </div>
+                                <div style="text-align:left;">
+                                    <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#b91c1c;">⚡ Carrinho Reservado</div>
+                                    <div style="font-size:13px; font-weight:600; color:#1f2937;">Seu pedido expira em <span id="globalTimer" style="color:#dc2626; font-weight:800; font-variant-numeric: tabular-nums;">15:00</span></div>
+                                </div>
+                            </div>
+                            <style>
+                                @keyframes reserveBannerPulse {
+                                    0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+                                    50% { box-shadow: 0 0 0 4px rgba(239,68,68,0.12); }
+                                }
+                            </style>
+
+                            <h2 style="font-size:18px; margin-bottom: 20px; font-weight:700; color: var(--color-primary);">Dados Pessoais</h2>
+                            <form id="formCheckoutStep1">
+                                <div class="form-group">
+                                    <label>Nome Completo *</label>
+                                    <div class="input-wrapper" style="position: relative;">
+                                        <i class="ph ph-user" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 18px; color: var(--color-primary);"></i>
+                                        <input type="text" id="chkName" class="form-control" required
+                                            placeholder="Ex: João da Silva" style="padding-left: 42px;"
+                                            autocomplete="name">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>E-mail *</label>
+                                    <div class="input-wrapper" style="position: relative;">
+                                        <i class="ph ph-envelope-simple" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 18px; color: var(--color-primary);"></i>
+                                        <input type="email" id="chkEmail" inputmode="email" autocapitalize="none" spellcheck="false" enterkeyhint="next" class="form-control" required
+                                            placeholder="joao@email.com" style="padding-left: 42px;"
+                                            autocomplete="email"
+                                           >
+                                    </div>
+                                    <small id="chkEmailError" style="color:#ef4444; font-size:12px; display:none; margin-top:4px; font-weight:500;"></small>
+                                </div>
+                                <div style="display:flex; gap:16px;">
+                                    <div class="form-group" style="flex:1;">
+                                        <label>CPF *</label>
+                                        <div class="input-wrapper" style="position: relative;">
+                                            <i class="ph ph-identification-card" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 18px; color: var(--color-primary);"></i>
+                                            <input type="text" id="chkDoc" inputmode="numeric" enterkeyhint="next" class="form-control" maxlength="14" required
+                                                placeholder="000.000.000-00" style="padding-left: 42px;"
+                                                autocomplete="off"
+                                               
+                                               >
+                                        </div>
+                                        <small id="chkDocError" style="color: #ef4444; font-size: 12px; display: none; margin-top: 4px; font-weight: 500;"></small>
+                                    </div>
+                                    <div class="form-group" style="flex:1;">
+                                        <label>Celular / WhatsApp *</label>
+                                        <div class="input-wrapper" style="position: relative;">
+                                            <i class="ph ph-whatsapp-logo" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 18px; color: var(--color-primary);"></i>
+                                            <input type="tel" inputmode="numeric" enterkeyhint="next" id="chkPhone" class="form-control" maxlength="15" required
+                                                placeholder="(11) 99999-9999" style="padding-left: 42px;"
+                                                autocomplete="tel"
+                                               >
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" id="btnStep1Submit" class="btn-primary" style="margin-top:16px; display:flex; align-items:center; justify-content:center; gap:8px; font-size:14px; font-weight:800; letter-spacing:0.3px;">
+                                    CONTINUAR PARA ENDEREÇO DE ENTREGA →
+                                </button>
+                                <div class="trust-badges-chk" style="flex-direction: row; justify-content: center; margin-top: 16px;">
+                                    <div class="t-badge" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 16px; border-radius: 8px;">
+                                        <i class="ph ph-shield-check" style="color:#059669;"></i> Seguro</div>
+                                    <div class="t-badge" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 16px; border-radius: 8px;">
+                                        <i class="ph ph-truck" style="color:#059669;"></i> Entrega Rápida</div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Etapa 2: Entrega -->
+                    <div class="checkout-step" id="step-2">
+                        <div class="step-title"></div>
+                        <div class="step-body" style="display:none;">
+                            <div
+                                style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 20px;">
+                                <h2 style="font-size:18px; font-weight:700; margin:0; color: var(--color-primary);">
+                                    Endereço</h2>
+                                <button type="button" class="btn-edit-step" data-action="step" data-step="1" id="btnEdit1"
+                                    style="position:static;">Editar Dados</button>
+                            </div>
+
+                            <div class="form-group">
+                                <label>CEP *</label>
+                                <div style="position:relative;">
+                                    <input type="text" id="chkCep" class="form-control" maxlength="9" inputmode="numeric"
+                                        placeholder="00000-000"
+                                        autocomplete="postal-code"
+                                       
+                                        style="padding-right:44px;">
+                                    <span id="cepSpinner" style="display:none; position:absolute; right:14px; top:50%; transform:translateY(-50%);"><i class="ph ph-circle-notch" style="animation:spin 0.8s linear infinite; color:var(--color-primary); font-size:18px;"></i></span>
+                                    <span id="cepOk" style="display:none; position:absolute; right:14px; top:50%; transform:translateY(-50%); color:#10b981; font-size:18px;"><i class="ph-bold ph-check-circle"></i></span>
+                                </div>
+                            </div>
+                            <p id="cepMessage" role="status" style="font-size:13px;color:#b45309;margin-top:8px;"></p>
+                            <div id="chkAddressFields" style="margin-top: 16px;">
+                                <div style="display:flex; gap:16px;">
+                                    <div class="form-group" style="flex:2;">
+                                        <label>Rua / Avenida *</label>
+                                        <input type="text" id="chkStreet" class="form-control" required>
+                                    </div>
+                                    <div class="form-group" style="flex:1;">
+                                        <label>Número *</label>
+                                        <input type="text" id="chkNumber" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div style="display:flex; gap:16px;">
+                                    <div class="form-group" style="flex:1;">
+                                        <label>Complemento</label>
+                                        <input type="text" id="chkComp" class="form-control">
+                                    </div>
+                                    <div class="form-group" style="flex:1;">
+                                        <label>Bairro *</label>
+                                        <input type="text" id="chkNeighborhood" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div style="display:flex; gap:16px;">
+                                    <div class="form-group" style="flex:2;">
+                                        <label>Cidade *</label>
+                                        <input type="text" id="chkCity" class="form-control" required>
+                                    </div>
+                                    <div class="form-group" style="flex:1;">
+                                        <label>Estado (UF) *</label>
+                                        <input type="text" id="chkState" class="form-control" maxlength="2" required>
+                                    </div>
+                                </div>
+
+                                <!-- Opções de Frete -->
+                                <div id="chkShippingOptionsBox" style="margin-top:20px; display:none;">
+                                    <div id="checkoutFreeShippingBanner"
+                                        style="background: #f0fdf4; border: 1px dashed #bbf7d0; padding: 12px; border-radius: 8px; margin-bottom: 16px; display: none; align-items: center; gap: 12px;">
+                                        <div
+                                            style="background: #22c55e; color: #fff; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">
+                                            <i class="ph-fill ph-truck"></i>
+                                        </div>
+                                        <div>
+                                            <h4
+                                                style="margin: 0 0 4px 0; font-size: 14px; color: #166534; font-weight: 700;">
+                                                Envio Expresso Promocional Desbloqueado!</h4>
+                                            <p style="margin: 0; font-size: 12px; color: #15803d; line-height: 1.4;">
+                                                Parabéns! Sua compra acima de R$ 150,00 garantiu frete grátis com envio
+                                                prioritário imediato.</p>
+                                        </div>
+                                    </div>
+                                    <h4 style="margin-bottom:12px; font-size:14px;">Forma de Entrega:</h4>
+                                    <div id="chkShippingOptionsList"></div>
+                                </div>
+
+                                <button type="button" class="btn-primary" style="margin-top:24px; font-size:14px; font-weight:800; letter-spacing:0.3px;"
+                                    id="btnShippingContinue" data-action="step" data-step="3" disabled>IR PARA O PAGAMENTO SEGURO →</button>
+                                <div class="trust-badges-chk"
+                                    style="flex-direction: row; justify-content: center; margin-top: 16px;">
+                                    <div class="t-badge"
+                                        style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 16px; border-radius: 8px;">
+                                        <i class="ph ph-shield-check" style="color:#059669;"></i> Seguro</div>
+                                    <div class="t-badge"
+                                        style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 16px; border-radius: 8px;">
+                                        <i class="ph ph-truck" style="color:#059669;"></i> Entrega Rápida</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Etapa 3: Pagamento -->
+                    <div class="checkout-step" id="step-3">
+                        <div class="step-title"></div>
+                        <div class="step-body" style="display:none;">
+                            <h2
+                                style="font-size:18px; font-weight:700; margin:0 0 20px 0; color: var(--color-primary);">
+                                Finalizar Pagamento</h2>
+
+                            <div
+                                style="background: rgba(10,59,44,0.02); padding: 20px; border-radius: 12px; border: 1px solid rgba(10,59,44,0.05); display: flex; flex-direction: column; gap: 16px;">
+                                <!-- Address Review Box -->
+                                <div class="review-address-box"
+                                    style="background: #fff; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); border-radius: 8px; padding: 12px; text-align: left; position: relative; display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="flex: 1;">
+                                        <h4
+                                            style="font-size: 13px; margin:0 0 4px 0; color: var(--color-primary); font-weight: 700;">
+                                            <i class="ph-fill ph-map-pin"></i> Entregar em:</h4>
+                                        <p id="reviewAddressText"
+                                            style="font-size: 12px; color: #475569; margin:0; line-height: 1.4;">
+                                            Preencha o endereço na etapa anterior.</p>
+                                    </div>
+                                    <button type="button" data-action="step" data-step="2"
+                                        style="background:none; border:none; color: var(--color-primary); font-weight: 600; font-size: 12px; cursor: pointer; text-decoration: underline; padding-left: 12px; flex-shrink: 0;">Alterar</button>
+                                </div>
+
+                                <!-- Order Bumps -->
+                                <div id="checkoutOrderBumpContainer" style="margin-bottom: 10px;"></div>
+
+                                <!-- Seleção da Forma de Pagamento -->
+                                <div class="payment-method-selector"
+                                    style="display: flex; gap: 12px; margin-bottom: 16px;">
+                                    <button type="button" class="payment-tab active" id="tabPayPix"
+                                        data-action="pay-method" data-method="pix"
+                                        style="flex: 1; padding: 14px 10px; border: 2px solid var(--color-primary, #0a3b2c); background: #f0fdf4; border-radius: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: all 0.2s ease;">
+                                        <div
+                                            style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #0a3b2c; font-size: 14px;">
+                                            <img src="https://logospng.org/download/pix/logo-pix-icone-1024.png"
+                                                alt="Pix" style="width:18px; height:18px;"> PIX
+                                        </div>
+                                        <span
+                                            style="font-size: 11px; color: #166534; font-weight: 600; background: #dcfce7; padding: 2px 8px; border-radius: 10px;">Aprovação
+                                            Imediata</span>
+                                    </button>
+
+                                    <button type="button" class="payment-tab" id="tabPayCard"
+                                        data-action="pay-method" data-method="card"
+                                        style="flex: 1; padding: 14px 10px; border: 2px solid #e2e8f0; background: #fff; border-radius: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: all 0.2s ease;">
+                                        <div
+                                            style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #334155; font-size: 14px;">
+                                            <i class="ph-fill ph-credit-card"
+                                                style="font-size: 20px; color: #2563eb;"></i> Cartão de Crédito
+                                        </div>
+                                        <span
+                                            style="font-size: 11px; color: #475569; font-weight: 600; background: #f1f5f9; padding: 2px 8px; border-radius: 10px;">Em
+                                            até 12x</span>
+                                    </button>
+                                </div>
+
+                                <!-- Conteúdo PIX -->
+                                <div id="paymentContentPix" style="text-align: center;">
+                                    <div class="pix-badge"
+                                        style="display: inline-flex; align-items: center; gap: 6px; background: rgba(34,197,94,0.1); color: #166534; padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 13px; margin-bottom: 12px;">
+                                        <img src="https://logospng.org/download/pix/logo-pix-icone-1024.png" alt="Pix"
+                                            style="width:16px;">
+                                        Aprovação Imediata
+                                    </div>
+                                    <button type="button" class="btn-primary"
+                                        style="width:100%; font-size:15px; padding:14px; box-shadow: 0 4px 12px rgba(10,59,44,0.15); font-weight:800;"
+                                        data-action="pix-submit" id="btnFinalizarPix">
+                                        <i class="ph-bold ph-check-circle"></i> <span id="btnPixLabel">CONCLUIR PEDIDO COM PIX POR R$ <span id="chkTotalBtn">0,00</span> (10% OFF)</span>
+                                    </button>
+                                </div>
+
+                                <!-- Conteúdo Cartão de Crédito: ponto de montagem do gateway (campos hospedados/tokenizados) -->
+                                <div id="paymentContentCard" style="display: none; text-align: left;">
+                                    <div id="cardGatewayMount" style="padding: 16px; border: 1px dashed #cbd5e1; border-radius: 12px; background: #f8fafc; color: #475569; font-size: 13px; line-height: 1.5; text-align: center;">
+                                        O pagamento com cartão será habilitado em breve. Enquanto isso, finalize com Pix e ganhe 10% de desconto.
+                                    </div>
+                                </div>
+                                <div class="trust-badges-chk"
+                                    style="flex-direction: row; justify-content: center; margin-top: 16px;">
+                                    <div class="t-badge"
+                                        style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 16px; border-radius: 8px;">
+                                        <i class="ph ph-shield-check" style="color:#059669;"></i> Seguro</div>
+                                    <div class="t-badge"
+                                        style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 16px; border-radius: 8px;">
+                                        <i class="ph ph-truck" style="color:#059669;"></i> Entrega Rápida</div>
+                                </div>
+
+                                <!-- Banner Discreto Envio Comprovante WhatsApp -->
+                                <div id="wppProofNoticeStep3"
+                                    style="margin-top: 16px; padding: 12px 14px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+                                    <div
+                                        style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 200px;">
+                                        <i class="ph-fill ph-whatsapp-logo"
+                                            style="font-size: 22px; color: #25D366; flex-shrink: 0;"></i>
+                                        <div style="font-size: 12px; color: #334155; line-height: 1.35;">
+                                            <strong style="color: #0f172a; display: block; font-weight: 700;">Dúvidas ou
+                                                agilizar postagem?</strong>
+                                            <span>Envie o comprovante de pagamento no WhatsApp para liberação
+                                                prioritária.</span>
+                                        </div>
+                                    </div>
+                                    <a id="btnWppProofStep3"
+                                        role="button" aria-disabled="true" title="WhatsApp temporariamente indisponível"
+                                        style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: #25D366; color: #fff; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 12px; transition: background 0.2s; white-space: nowrap; border: none;">
+                                        <i class="ph-bold ph-whatsapp-logo" style="font-size: 14px;"></i> Enviar
+                                        Comprovante
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <style>
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
+    <!-- Scripts da Aplicação -->
+    <script src="/js/checkout.js" defer></script>
+</body>
+
+</html>

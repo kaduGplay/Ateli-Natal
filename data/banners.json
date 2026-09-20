@@ -1,0 +1,26 @@
+[
+  {
+    "id": 7,
+    "name": "Banner",
+    "imageUrl": "/uploads/img_6a9e1902475cd_1788745986.jpg",
+    "linkUrl": "",
+    "active": true,
+    "order": 1
+  },
+  {
+    "id": 6,
+    "name": "Banner",
+    "imageUrl": "/uploads/img_6a9e190038ac0_1788745984.jpg",
+    "linkUrl": "",
+    "active": true,
+    "order": 2
+  },
+  {
+    "id": 8,
+    "name": "Banner",
+    "imageUrl": "/uploads/img_6a9e19042f329_1788745988.jpg",
+    "linkUrl": "",
+    "active": true,
+    "order": 3
+  }
+]

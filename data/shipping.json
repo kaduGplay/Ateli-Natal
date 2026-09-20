@@ -1,0 +1,21 @@
+{
+  "note": "Tabela do checkout de atelienatal.com consultada em 19/09/2026. Valores em reais; prazos em dias úteis.",
+  "options": [
+    {
+      "id": "expresso",
+      "name": "LogiPulse Express",
+      "price": 19.52,
+      "deliveryDays": 3,
+      "isPromo": true,
+      "freeAbove": 150
+    },
+    {
+      "id": "sedex",
+      "name": "Sedex (Correios)",
+      "price": 35.9,
+      "deliveryDays": 3,
+      "isPromo": false,
+      "freeAbove": 0
+    }
+  ]
+}
