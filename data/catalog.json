@@ -1826,5 +1826,40 @@
     ],
     "salesCount": 0,
     "hasGift": false
+  },
+  {
+    "id": "PROJ-NATAL-16",
+    "name": "Projetor LED Natalino com 16 Desenhos de Natal",
+    "price": 59.9,
+    "oldPrice": null,
+    "stock": 190,
+    "active": true,
+    "image": "/uploads/projetor-natalino-16-desenhos-1.png",
+    "images": [
+      "/uploads/projetor-natalino-16-desenhos-1.png",
+      "/uploads/projetor-natalino-16-desenhos-2.png",
+      "/uploads/projetor-natalino-16-desenhos-3.png",
+      "/uploads/projetor-natalino-16-desenhos-4.png"
+    ],
+    "category": "piscas",
+    "order": 1015,
+    "description": "<div class=\"premium-desc-v4 pdp-pro-description\"><div class=\"section-light\"><div class=\"super-title\">ILUMINAÇÃO DE NATAL</div><h2 class=\"main-title\">Um toque de luz para celebrar o Natal</h2><div class=\"desc-text\"><p>Crie uma decoração luminosa com o Projetor LED Natalino com 16 desenhos. Projete motivos de Natal em paredes e prepare um cenário para reunir a família e receber os amigos.</p></div><img src=\"/uploads/projetor-natalino-16-desenhos-1.png\" class=\"placeholder-media\" alt=\"Projetor LED natalino com 16 desenhos\" loading=\"lazy\"></div><div class=\"section-dark\"><h2 class=\"main-title dark\">16 desenhos para compor sua decoração</h2><p class=\"desc-text dark\">Use as projeções para complementar a decoração de Natal de casa, festas e confraternizações. Posicione o projetor em direção à superfície desejada para criar o efeito luminoso.</p></div><div class=\"section-light\"><img src=\"/uploads/projetor-natalino-16-desenhos-4.png\" class=\"placeholder-media\" alt=\"Detalhes do projetor e desenhos natalinos\" loading=\"lazy\"><h2 class=\"main-title\">Prepare seu cenário natalino</h2><p class=\"desc-text\">Combine os desenhos de Natal com os seus enfeites favoritos para decorar paredes e ambientes de festa.</p><div class=\"care-card\"><div class=\"care-content\"><h4>Antes de instalar</h4><p>Confira a tensão e as instruções na embalagem antes de ligar o produto. Para áreas externas, confirme as condições de uso indicadas pelo fabricante e mantenha as conexões elétricas protegidas.</p></div></div></div></div>",
+    "specs": "Tipo: Projetor LED decorativo de Natal\nQuantidade de desenhos: 16\nTema: Natal\nAplicação: Projeção decorativa em paredes e ambientes de festas\nTensão, potência e grau de proteção: consultar a embalagem e as instruções do fabricante.",
+    "isBestSeller": false,
+    "bestSellerOrder": 999,
+    "isOrderBump": false,
+    "orderBumpOrder": 999,
+    "freeShippingEligible": false,
+    "urgencyCopy": "",
+    "crossSell": [],
+    "variations": [],
+    "features": [
+      "16 desenhos com tema natalino",
+      "Iluminação decorativa com tecnologia LED",
+      "Projeções para decorar paredes e ambientes",
+      "Ideal para compor cenários de festas e confraternizações"
+    ],
+    "salesCount": 0,
+    "hasGift": false
   }
 ]
