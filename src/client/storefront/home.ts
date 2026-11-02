@@ -100,16 +100,28 @@ export async function loadCategories(): Promise<void> {
   if (!list) return;
   const allImage = getStoreSettings().allCategoryImage || '/uploads/logo.jpg';
   const story = (cat: string, name: string, img: string, active = false): string => `
-    <div class="story-item${active ? ' active' : ''}" data-cat="${esc(cat)}" data-action="filter-category">
+    <button type="button" class="story-item${active ? ' active' : ''}" aria-pressed="${active}" data-cat="${esc(cat)}" data-action="filter-category">
       <div class="story-avatar"><div class="story-ring"><img src="${esc(img)}" alt="${esc(name)}"></div></div>
       <span class="story-name">${esc(name)}</span>
-    </div>`;
+    </button>`;
   list.innerHTML = story('all', 'Todos', allImage, true) + state.categories.map((c) => story(c.slug, c.name, c.avatar)).join('');
 }
 
 export function filterByCategory(slug: string): void {
-  qsa('#categoryStoriesList .story-item').forEach((item) => item.classList.toggle('active', item.dataset.cat === slug));
+  qsa('#categoryStoriesList .story-item').forEach((item) => {
+    const active = item.dataset.cat === slug;
+    item.classList.toggle('active', active);
+    item.setAttribute('aria-pressed', String(active));
+  });
   renderProductGrid(slug);
+  const best = byId('bestSellersSection');
+  if (best) best.style.display = slug === 'all' && state.products.some((p) => p.isBestSeller) ? '' : 'none';
+  const bumps = byId('bumpsSection');
+  if (bumps) {
+    if (slug === 'all') renderBumpsShowcase();
+    else bumps.style.display = 'none';
+  }
+  byId('catalogSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   if (slug !== 'all') pixel.viewCategory(slug);
 }
 
@@ -117,6 +129,10 @@ export function renderProductGrid(category = 'all'): void {
   const grid = byId('mainProductGrid');
   if (!grid) return;
   const products = state.products.filter((p) => category === 'all' || p.category.toLowerCase() === category.toLowerCase());
+  const title = byId('catalogTitle');
+  if (title) title.textContent = category === 'all' ? 'Todos os produtos' : state.categories.find((c) => c.slug === category)?.name ?? 'Produtos';
+  const count = byId('catalogCount');
+  if (count) count.textContent = `${products.length} ${products.length === 1 ? 'produto encontrado' : 'produtos encontrados'}`;
   grid.innerHTML = products.length
     ? products.map((p, i) => renderProductCard(p, { index: i, showLowStock: true })).join('')
     : '<div style="grid-column:1/-1;text-align:center;padding:48px;color:#64748b;"><i class="ph ph-package" style="font-size:48px;display:block;margin-bottom:12px;"></i>Nenhum produto nesta categoria.</div>';

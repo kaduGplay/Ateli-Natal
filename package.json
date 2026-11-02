@@ -13,7 +13,7 @@
     "typecheck": "tsc -p tsconfig.server.json --noEmit && tsc -p tsconfig.client.json --noEmit && tsc -p tsconfig.netlify.json",
     "test:payments": "npm run build:server && node --test tests/payments.test.mjs tests/database.test.mjs",
     "test:netlify": "node --test tests/netlify.test.mjs",
-    "test:checkout": "node --test tests/checkout-browser.test.mjs",
+    "test:checkout": "node --test tests/checkout-browser.test.mjs tests/categories-browser.test.mjs",
     "sync": "node scripts/sync-github.mjs",
     "verify": "npm run typecheck && npm run build && npm run test:payments && npm run test:netlify && npm run test:checkout"
   },

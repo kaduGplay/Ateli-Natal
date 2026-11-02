@@ -275,7 +275,7 @@
             <!-- Stories-style Category Navigation -->
             <nav class="stories-category-nav">
                 <div class="stories-container" id="categoryStoriesList">
-                    <div class="story-item active" data-cat="all" data-action="filter-category" data-cat="all">
+                    <div class="story-item active" data-cat="all" data-action="filter-category">
                         <div class="story-avatar">
                             <div class="story-ring">
                                 <img src="/uploads/logo.jpg" alt="Todos" id="imgCatTodos">
@@ -360,9 +360,10 @@
             </section>
 
             <!-- Showcase Section -->
-            <section class="showcase">
+            <section class="showcase" id="catalogSection" style="scroll-margin-top: 110px;">
                 <div class="showcase-header">
-                    <h2>Lançamentos / Lote de Setembro</h2>
+                    <h2 id="catalogTitle">Todos os produtos</h2>
+                    <p id="catalogCount" role="status" aria-live="polite"></p>
                 </div>
 
                 <!-- Product Grid -->
