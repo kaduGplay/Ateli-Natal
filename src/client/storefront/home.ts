@@ -128,7 +128,8 @@ export function filterByCategory(slug: string): void {
 export function renderProductGrid(category = 'all'): void {
   const grid = byId('mainProductGrid');
   if (!grid) return;
-  const products = state.products.filter((p) => category === 'all' || p.category.toLowerCase() === category.toLowerCase());
+  const products = state.products.filter((p) => category === 'all' || [p.category, ...(p.additionalCategories ?? [])].some((slug) => slug.toLowerCase() === category.toLowerCase()));
+  if (category !== 'all') products.sort((a, b) => (a.categoryOrder?.[category] ?? a.order) - (b.categoryOrder?.[category] ?? b.order));
   const title = byId('catalogTitle');
   if (title) title.textContent = category === 'all' ? 'Todos os produtos' : state.categories.find((c) => c.slug === category)?.name ?? 'Produtos';
   const count = byId('catalogCount');

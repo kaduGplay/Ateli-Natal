@@ -20,10 +20,16 @@ test('Every category filters the catalog, updates feedback and Todos restores al
   sandbox.Categories.state.categories = categories;
   for (const slug of [...categories.map(c => c.slug), 'all']) {
     sandbox.Categories.filterByCategory(slug);
-    const expected = products.filter(p => slug === 'all' || p.category === slug);
+    const expected = products.filter(p => slug === 'all' || [p.category, ...(p.additionalCategories ?? [])].includes(slug));
     const grid = elements.get('mainProductGrid').innerHTML;
     assert.equal((grid.match(/<article /g) || []).length, expected.length, slug);
     assert.ok(expected.every(p => grid.includes(`id=${encodeURIComponent(p.id)}`)), slug);
+    if (slug === 'promocoes') {
+      assert.equal(expected.filter(p => p.id === 'PROJ-NATAL-16').length, 1);
+      const ids = [...grid.matchAll(/href="#produto\?id=([^"&]+)/g)].map(m => m[1]);
+      assert.equal(ids[0], 'PROJ-NATAL-16');
+    }
+    if (slug === 'piscas') assert.ok(expected.some(p => p.id === 'PROJ-NATAL-16'));
     assert.equal(elements.get('catalogTitle').textContent, slug === 'all' ? 'Todos os produtos' : categories.find(c => c.slug === slug).name);
     assert.match(elements.get('catalogCount').textContent, new RegExp(`^${expected.length} `));
     assert.equal(buttons.find(b => b.dataset.cat === slug)['aria-pressed'], 'true');

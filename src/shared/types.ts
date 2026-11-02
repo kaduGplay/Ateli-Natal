@@ -20,6 +20,8 @@ export interface Product {
   image: string;
   images: string[];
   category: string;
+  additionalCategories?: string[];
+  categoryOrder?: Record<string, number>;
   order: number;
   /** HTML da descrição (conteúdo do próprio catálogo). */
   description: string;

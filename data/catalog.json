@@ -1860,6 +1860,12 @@
       "Ideal para compor cenários de festas e confraternizações"
     ],
     "salesCount": 0,
-    "hasGift": false
+    "hasGift": false,
+    "additionalCategories": [
+      "promocoes"
+    ],
+    "categoryOrder": {
+      "promocoes": -1
+    }
   }
 ]
