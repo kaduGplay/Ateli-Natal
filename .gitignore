@@ -8,6 +8,7 @@ data/voidpay-events.json
 data/pix-attempts.json
 
 .vercel/
+.netlify/
 .DS_Store
 *.log
 /public/js/

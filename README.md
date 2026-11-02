@@ -22,6 +22,14 @@ Abra http://localhost:3000. Para validar: `npm run verify`.
 
 O catálogo, imagens e avaliações importadas vão com o projeto. Pedidos, tentativas de Pix e tokens de webhook **não vão para o GitHub**. Na Vercel eles são persistidos em PostgreSQL; não se usa `/tmp` como banco. Em desenvolvimento sem banco, o armazenamento continua em arquivos locais.
 
+## Publicar na Netlify
+
+`netlify.toml` publica `public/` e executa `/api/*` na função Express `netlify/functions/api.ts`. Use Node.js 22 e o comando de build `npm run build`.
+
+Configure no painel da Netlify `ATELIE_HOSTING=netlify`, `NODE_ENV=production`, `VOIDPAY_PUBLIC_KEY`, `VOIDPAY_PRIVATE_KEY`, `DATABASE_URL` (PostgreSQL com SSL) e `PUBLIC_BASE_URL` (endereço HTTPS publicado). As chaves e a conexão do banco são variáveis privadas, nunca arquivos da vitrine. O callback é `PUBLIC_BASE_URL` + `/api/webhooks/voidpay`.
+
+O banco pode ser externo quando Netlify Database não estiver disponível no plano. Sem PostgreSQL, a API recusa operações de pedidos; não grava pedidos no filesystem temporário das funções. A reserva de criação do Pix usa a mesma transação PostgreSQL das outras plataformas. Para publicar pelo CLI autenticado: `netlify deploy --prod`. A conexão com Git para deploy automático é uma configuração separada no painel.
+
 Sem `DATABASE_URL`, a vitrine funciona, mas o checkout na Vercel não gera cobranças: impede criar Pix sem poder guardar o pedido. Configure banco e credenciais antes de disponibilizar a loja para vendas.
 
 As transações do banco serializam alterações por conjunto de dados. A reserva de solicitação do Pix é atômica entre instâncias, impedindo cobranças duplicadas em requisições simultâneas. Este modelo armazena conjuntos JSONB e atende uma loja pequena; antes de alto volume, migre pedidos e eventos para tabelas com uma linha por registro.

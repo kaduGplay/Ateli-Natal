@@ -11,7 +11,7 @@ Node.js 22 ou superior. O servidor carrega `.env` na raiz; variáveis do ambient
 - `PUBLIC_BASE_URL`: domínio HTTPS público desta aplicação, sem caminho. Opcional para gerar a cobrança; necessário para receber automaticamente sua confirmação via callback.
 - `GATEWAY_WEBHOOK_TOKEN`: opcional para webhook cadastrado manualmente no painel; deve ser o token real dessa configuração. Não use o token dos exemplos da documentação.
 
-As chaves fornecidas já estão no `.env` local, com permissão 0600, ignorado pelo Git. Configure o domínio real para receber confirmações automáticas. Sem ele, a cobrança real pode ser criada, mas o status local depende de um webhook configurado no painel. O `.env.example` contém apenas nomes de variáveis.
+As chaves locais devem ficar no `.env`, com permissão 0600, ignorado pelo Git. Na hospedagem, configure-as nas variáveis privadas do projeto. Configure o domínio real para receber confirmações automáticas. Sem ele, a cobrança real pode ser criada, mas o status local depende de um webhook configurado no painel. O `.env.example` contém apenas nomes de variáveis.
 
 ```sh
 npm run build
@@ -30,9 +30,9 @@ Uma notificação só aprova um pedido com o mesmo ID de transação da VoidPay,
 
 ## Persistência e operação
 
-`data/orders.json`, `data/pix-attempts.json` e `data/voidpay-events.json` precisam permanecer em armazenamento persistente. Escritas usam arquivo temporário, fsync e rename; novos arquivos privados têm permissão 0600. Não sirva a pasta `data` nem `.env` publicamente.
+Em produção serverless (Vercel e Netlify), configure `DATABASE_URL` ou `POSTGRES_URL`. Pedidos, tentativas, eventos e alterações em avaliações usam PostgreSQL, com transação e advisory lock por conjunto de dados; a reserva da cobrança é atômica entre instâncias. Sem banco, operações privadas são recusadas antes da chamada ao gateway.
 
-Este armazenamento suporta **um processo Node por diretório de dados**. Para vários processos/instâncias, substitua-o por banco transacional com índices únicos para solicitação e evento/transação.
+Em desenvolvimento sem banco, `data/orders.json`, `data/pix-attempts.json` e `data/voidpay-events.json` usam arquivo temporário, fsync e rename; novos arquivos privados têm permissão 0600. Este modo suporta **um processo Node por diretório de dados**. Não sirva a pasta `data` nem `.env` publicamente.
 
 Cada solicitação usa um identificador persistido antes da chamada ao gateway. Repetir uma solicitação já concluída devolve a mesma cobrança. Após timeout ou resposta ambígua, não há nova cobrança automática: a tentativa fica em verificação. Uma falha antes de persistir o token recebido exige reconciliação operacional com o painel; nunca marque um pedido como pago manualmente sem evidência da operadora.
 

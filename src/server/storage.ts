@@ -29,7 +29,7 @@ export async function readJson<T>(name: string, fallback: T): Promise<T> {
     if (result.rows.length) return result.rows[0].data as T;
     return privateData.has(name) ? fallback : readFileJson(name, fallback);
   }
-  if (config.isVercel && privateData.has(name)) throw new HttpError(503, 'O armazenamento de pedidos ainda não foi configurado.');
+  if (config.isServerless && privateData.has(name)) throw new HttpError(503, 'O armazenamento de pedidos ainda não foi configurado.');
   return readFileJson(name, fallback);
 }
 
@@ -58,7 +58,7 @@ async function updateDatabase<T>(name: string, fallback: T, mutate: (current: T)
  */
 export async function updateJson<T>(name: string, fallback: T, mutate: (current: T) => T | Promise<T>): Promise<T> {
   if (databaseUrl() && mutable.has(name)) return updateDatabase(name, fallback, mutate);
-  if (config.isVercel) throw new HttpError(503, 'O armazenamento de pedidos ainda não foi configurado.');
+  if (config.isServerless) throw new HttpError(503, 'O armazenamento de pedidos ainda não foi configurado.');
   const previous = locks.get(name) ?? Promise.resolve();
   const run = previous.then(async () => {
     const next = await mutate(await readJson(name, fallback));
