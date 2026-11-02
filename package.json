@@ -11,7 +11,7 @@
     "dev": "npm run build:client && tsx watch src/server/index.ts",
     "start": "node dist/server/server/index.js",
     "typecheck": "tsc -p tsconfig.server.json --noEmit && tsc -p tsconfig.client.json --noEmit && tsc -p tsconfig.netlify.json",
-    "test:payments": "npm run build:server && node --test tests/payments.test.mjs",
+    "test:payments": "npm run build:server && node --test tests/payments.test.mjs tests/database.test.mjs",
     "test:netlify": "node --test tests/netlify.test.mjs",
     "sync": "node scripts/sync-github.mjs",
     "verify": "npm run typecheck && npm run build && npm run test:payments && npm run test:netlify"

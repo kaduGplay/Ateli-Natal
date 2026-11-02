@@ -1,7 +1,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { config } from './config.js';
-import { databaseUrl, getDatabase } from './database.js';
+import { databaseUrl, documentTable, getDatabase } from './database.js';
 import { HttpError } from './errors.js';
 
 const mutable = new Set(['orders', 'pix-attempts', 'voidpay-events', 'reviews']);
@@ -25,7 +25,7 @@ async function readFileJson<T>(name: string, fallback: T): Promise<T> {
 export async function readJson<T>(name: string, fallback: T): Promise<T> {
   if (mutable.has(name) && databaseUrl()) {
     const db = await getDatabase();
-    const result = await db.query('SELECT data FROM storefront_documents WHERE name = $1', [name]);
+    const result = await db.query(`SELECT data FROM ${documentTable()} WHERE name = $1`, [name]);
     if (result.rows.length) return result.rows[0].data as T;
     return privateData.has(name) ? fallback : readFileJson(name, fallback);
   }
@@ -39,10 +39,10 @@ async function updateDatabase<T>(name: string, fallback: T, mutate: (current: T)
     await client.query('BEGIN');
     await client.query("SET LOCAL lock_timeout = '15s'");
     await client.query('SELECT pg_advisory_xact_lock(hashtext($1))', [`atelie:${name}`]);
-    const result = await client.query('SELECT data FROM storefront_documents WHERE name = $1', [name]);
+    const result = await client.query(`SELECT data FROM ${documentTable()} WHERE name = $1`, [name]);
     const current = result.rows.length ? result.rows[0].data as T : privateData.has(name) ? fallback : await readFileJson(name, fallback);
     const next = await mutate(current);
-    await client.query(`INSERT INTO storefront_documents (name, data) VALUES ($1, $2::jsonb)
+    await client.query(`INSERT INTO ${documentTable()} (name, data) VALUES ($1, $2::jsonb)
       ON CONFLICT (name) DO UPDATE SET data = EXCLUDED.data, updated_at = now()`, [name, JSON.stringify(next)]);
     await client.query('COMMIT');
     return next;

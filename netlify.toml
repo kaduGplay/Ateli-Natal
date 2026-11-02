@@ -8,7 +8,7 @@
 
 [functions]
   node_bundler = "esbuild"
-  included_files = ["data/catalog.json", "data/categories.json", "data/banners.json", "data/settings.json", "data/coupons.json", "data/shipping.json", "data/reviews.json"]
+  included_files = ["data/catalog.json", "data/categories.json", "data/banners.json", "data/settings.json", "data/coupons.json", "data/shipping.json", "data/reviews.json", "certs/supabase-ca.crt"]
 
 [[redirects]]
   from = "/api/*"

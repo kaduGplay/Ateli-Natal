@@ -30,6 +30,8 @@ Configure no painel da Netlify `ATELIE_HOSTING=netlify`, `NODE_ENV=production`, 
 
 O banco pode ser externo quando Netlify Database não estiver disponível no plano. Sem PostgreSQL, a API recusa operações de pedidos; não grava pedidos no filesystem temporário das funções. A reserva de criação do Pix usa a mesma transação PostgreSQL das outras plataformas. Para publicar pelo CLI autenticado: `netlify deploy --prod`. A conexão com Git para deploy automático é uma configuração separada no painel.
 
+Para compartilhar um projeto PostgreSQL, configure `DATABASE_SCHEMA` com um schema exclusivo já provisionado e um login restrito à tabela da loja, com SELECT, INSERT, UPDATE e DELETE. O padrão é `public`. Em Supabase, mantenha esse schema fora da Data API e habilite RLS com uma política somente para o login do servidor. O certificado público em `certs/supabase-ca.crt` permite usar a conexão com `sslmode=verify-full&sslrootcert=certs/supabase-ca.crt`; ele vem do [download oficial do Supabase](https://supabase-downloads.s3-ap-southeast-1.amazonaws.com/prod/ssl/prod-ca-2021.crt).
+
 Sem `DATABASE_URL`, a vitrine funciona, mas o checkout na Vercel não gera cobranças: impede criar Pix sem poder guardar o pedido. Configure banco e credenciais antes de disponibilizar a loja para vendas.
 
 As transações do banco serializam alterações por conjunto de dados. A reserva de solicitação do Pix é atômica entre instâncias, impedindo cobranças duplicadas em requisições simultâneas. Este modelo armazena conjuntos JSONB e atende uma loja pequena; antes de alto volume, migre pedidos e eventos para tabelas com uma linha por registro.
