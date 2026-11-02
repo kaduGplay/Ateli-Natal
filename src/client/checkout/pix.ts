@@ -1,5 +1,6 @@
 import type { CheckoutRequest, CheckoutResponse } from '../../shared/types';
 import { api } from '../lib/api';
+import { newRequestId, sha256Hex } from '../lib/crypto';
 
 let active: CheckoutResponse | undefined;
 let fingerprint = '';
@@ -10,8 +11,7 @@ function showPix(result: CheckoutResponse): void {
 }
 
 export async function startPix(payload: CheckoutRequest): Promise<void> {
-  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(payload)));
-  const nextFingerprint = Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, '0')).join('');
+  const nextFingerprint = sha256Hex(JSON.stringify(payload));
   if (!active) {
     try {
       const cached = JSON.parse(sessionStorage.getItem(CACHE) ?? 'null');
@@ -37,7 +37,7 @@ export async function startPix(payload: CheckoutRequest): Promise<void> {
     active = undefined;
     try { sessionStorage.removeItem(CACHE); sessionStorage.removeItem('ateliePixAttempt'); } catch { /* sem armazenamento */ }
   }
-  let requestId = crypto.randomUUID();
+  let requestId = newRequestId();
   try {
     const attempt = JSON.parse(sessionStorage.getItem('ateliePixAttempt') ?? 'null');
     if (attempt?.fingerprint === nextFingerprint && typeof attempt.requestId === 'string') requestId = attempt.requestId;
