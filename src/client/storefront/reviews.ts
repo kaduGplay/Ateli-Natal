@@ -9,7 +9,7 @@ const starsHtml = (rating: number): string =>
   Array.from({ length: 5 }, (_, i) => `<i class="${i < Math.round(rating) ? 'ph-fill' : 'ph'} ph-star"></i>`).join('');
 
 function reviewCard(r: Review): string {
-  const date = new Date(r.createdAt.length === 10 ? `${r.createdAt}T12:00:00` : r.createdAt).toLocaleDateString('pt-BR');
+  const date = r.createdAt ? new Date(r.createdAt.length === 10 ? `${r.createdAt}T12:00:00` : r.createdAt).toLocaleDateString('pt-BR') : '';
   const name = r.author.split(' - ')[0] ?? r.author;
   return `
     <article class="review-card">
@@ -18,7 +18,8 @@ function reviewCard(r: Review): string {
         <div>
           <div class="review-author">${esc(r.author)}
           </div>
-          <div class="review-date">${esc(date)}</div>
+          ${date ? `<div class="review-date">${esc(date)}</div>` : ''}
+          ${r.source ? `<div class="review-date">Avaliação importada de ${esc(r.source)}</div>` : ''}
         </div>
       </div>
       <div class="stars">${starsHtml(r.rating)}</div>

@@ -3,8 +3,17 @@ import type { Order, Review, ReviewSummary, ReviewsResponse } from '../../shared
 import { HttpError } from '../errors.js';
 import { readJson, updateJson } from '../storage.js';
 
+/** As importações públicas acompanham o catálogo, mesmo quando avaliações locais estão no banco. */
+async function allReviews(): Promise<Review[]> {
+  const [local, imported] = await Promise.all([
+    readJson<Review[]>('reviews', []),
+    readJson<Review[]>('imported-reviews', []),
+  ]);
+  return [...new Map([...imported, ...local].map((review) => [review.id, review])).values()];
+}
+
 export async function listReviews(productId: string): Promise<ReviewsResponse> {
-  const all = await readJson<Review[]>('reviews', []);
+  const all = await allReviews();
   const reviews = all.filter((r) => r.productId === productId).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   const count = reviews.length;
   const average = count ? Math.round((reviews.reduce((s, r) => s + r.rating, 0) / count) * 10) / 10 : 0;
@@ -13,7 +22,7 @@ export async function listReviews(productId: string): Promise<ReviewsResponse> {
 
 /** Resumo (quantidade e média) de todos os produtos, para as estrelas dos cards da vitrine. */
 export async function listReviewSummaries(): Promise<Record<string, ReviewSummary>> {
-  const all = await readJson<Review[]>('reviews', []);
+  const all = await allReviews();
   const sums = new Map<string, { count: number; total: number }>();
   for (const r of all) {
     const cur = sums.get(r.productId) ?? { count: 0, total: 0 };

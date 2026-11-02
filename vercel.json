@@ -10,7 +10,7 @@
   "functions": {
     "api/index.ts": {
       "maxDuration": 60,
-      "includeFiles": "data/{catalog,categories,banners,settings,coupons,shipping,reviews}.json"
+      "includeFiles": "data/{catalog,categories,banners,settings,coupons,shipping,reviews,imported-reviews}.json"
     }
   },
   "headers": [

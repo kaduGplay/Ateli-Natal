@@ -34,6 +34,18 @@ test('Netlify does not fall back to local order files without PostgreSQL', async
   assert.equal(response.statusCode, 503);
   assert.match(JSON.parse(response.body).message, /armazenamento/);
 });
+test('Imported product reviews and storefront summary agree and preserve their origin', async () => {
+  const response = await invoke('/api/products/PROJ-NATAL-16/reviews');
+  assert.equal(response.statusCode, 200);
+  const { reviews, summary } = JSON.parse(response.body).data;
+  assert.equal(reviews.length, 25);
+  assert.equal(new Set(reviews.map(r => r.id)).size, 25);
+  assert.deepEqual(summary, { count: 25, average: 4.9 });
+  assert.ok(reviews.every(r => r.source === 'Aura Store' && r.sourceUrl.startsWith('https://aurastoreglobal.com/') && !r.orderId));
+  assert.ok(reviews.every(r => r.createdAt === '' && r.rating >= 1 && r.rating <= 5 && r.author && r.text));
+  const summaries = JSON.parse((await invoke('/api/reviews/summary')).body).data;
+  assert.deepEqual(summaries['PROJ-NATAL-16'], summary);
+});
 test('Netlify disables the development payment route', async () => {
   assert.equal((await invoke('/api/dev/orders/test-order/pay', 'POST')).statusCode, 404);
 });
