@@ -22,7 +22,7 @@ function reviewCard(r: Review): string {
           ${r.source ? `<div class="review-date">Avaliação importada de ${esc(r.source)}${r.sourceUrl?.startsWith('https://') ? ` · <a href="${esc(r.sourceUrl)}" target="_blank" rel="noopener noreferrer">Ver origem</a>` : ''}</div>` : ''}
         </div>
       </div>
-      ${r.rating == null ? '<div class="review-date">Nota não informada</div>' : `<div class="stars">${starsHtml(r.rating)}</div>`}
+      ${r.rating == null ? '<div class="review-date"><strong>Comentário de comprador</strong></div>' : `<div class="stars">${starsHtml(r.rating)}</div>`}
       ${r.title ? `<div class="review-title">${esc(r.title)}</div>` : ''}
       <div class="review-text">${esc(r.text)}</div>
       ${(r.photos?.length ? r.photos : r.photo ? [r.photo] : []).length ? `<div class="review-photos">${(r.photos?.length ? r.photos : [r.photo!]).map((photo, i) => `<a href="${esc(photo)}" target="_blank" rel="noopener noreferrer"><img src="${esc(photo)}" alt="Foto ${i + 1} da avaliação de ${esc(r.author)}" loading="lazy"></a>`).join('')}</div>` : ''}
@@ -36,14 +36,14 @@ function renderSummaries(data: ReviewsResponse): void {
   const top = qs('#produto-view .pdp-reviews');
   if (top) {
     top.innerHTML = count
-      ? ratedCount === 0 ? `<span>${count} comentários · notas não informadas</span>` : `<div class="stars">${starsHtml(average)}</div><span>${average.toFixed(1)} (${count} ${count === 1 ? 'avaliação' : 'avaliações'})</span>`
+      ? ratedCount === 0 ? `<span>${count} comentários de compradores</span>` : `<div class="stars">${starsHtml(average)}</div><span>${average.toFixed(1)} (${count} ${count === 1 ? 'avaliação' : 'avaliações'})</span>`
       : '<span>Ainda sem avaliações</span>';
   }
 
   const summary = byId('pdpReviewsSummary');
   if (summary) {
     summary.innerHTML = count
-      ? ratedCount === 0 ? `<span>${count} comentários · notas não informadas</span>` : `<div class="stars">${starsHtml(average)}</div><strong>${average.toFixed(1)}</strong><span>· ${count} ${count === 1 ? 'avaliação' : 'avaliações'}</span>`
+      ? ratedCount === 0 ? `<span>${count} comentários de compradores</span>` : `<div class="stars">${starsHtml(average)}</div><strong>${average.toFixed(1)}</strong><span>· ${count} ${count === 1 ? 'avaliação' : 'avaliações'}</span>`
       : '<span>Este produto ainda não tem avaliações.</span>';
   }
 
