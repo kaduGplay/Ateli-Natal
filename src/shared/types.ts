@@ -183,6 +183,7 @@ export interface PixCharge {
 }
 
 export interface OrderItem {
+  isGift?: boolean;
   productId: string;
   name: string;
   variant: string;
@@ -194,6 +195,7 @@ export interface OrderItem {
 export interface MetaCheckoutContext { fbp?: string; fbc?: string; userAgent?: string; clientIp?: string }
 
 export interface Order {
+  analyticsSessionId?: string;
   meta?: MetaCheckoutContext;
   id: string;
   createdAt: string;
