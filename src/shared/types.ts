@@ -98,15 +98,17 @@ export interface Review {
   source?: string;
   sourceUrl?: string;
   author: string;
-  rating: 1 | 2 | 3 | 4 | 5;
+  rating: 1 | 2 | 3 | 4 | 5 | null;
   title?: string;
   text: string;
   photo?: string;
+  photos?: string[];
   createdAt: string;
 }
 
 export interface ReviewSummary {
   count: number;
+  ratedCount?: number;
   average: number;
 }
 

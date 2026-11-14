@@ -24,3 +24,6 @@
 .review-form-msg.ok { color: #059669; }
 .review-form-msg.err { color: #dc2626; }
 @media (max-width: 560px) { .review-form-row { grid-template-columns: 1fr; } }
+
+.review-photos { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
+.review-photos img { width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; }

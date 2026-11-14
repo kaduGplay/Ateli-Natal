@@ -15,22 +15,25 @@ async function allReviews(): Promise<Review[]> {
 export async function listReviews(productId: string): Promise<ReviewsResponse> {
   const all = await allReviews();
   const reviews = all.filter((r) => r.productId === productId).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-  const count = reviews.length;
-  const average = count ? Math.round((reviews.reduce((s, r) => s + r.rating, 0) / count) * 10) / 10 : 0;
-  return { summary: { count, average }, reviews };
+  return { summary: summarize(reviews), reviews };
 }
 
-/** Resumo (quantidade e média) de todos os produtos, para as estrelas dos cards da vitrine. */
+function summarize(reviews: Review[]): ReviewSummary {
+  const rated = reviews.filter((r) => typeof r.rating === 'number' && r.rating >= 1 && r.rating <= 5);
+  const average = rated.length ? Math.round(rated.reduce((sum, r) => sum + r.rating!, 0) / rated.length * 10) / 10 : 0;
+  return { count: reviews.length, average, ...(rated.length !== reviews.length ? { ratedCount: rated.length } : {}) };
+}
+
+/** Quantidade de comentários e média somente das notas conhecidas. */
 export async function listReviewSummaries(): Promise<Record<string, ReviewSummary>> {
   const all = await allReviews();
-  const sums = new Map<string, { count: number; total: number }>();
-  for (const r of all) {
-    const cur = sums.get(r.productId) ?? { count: 0, total: 0 };
-    sums.set(r.productId, { count: cur.count + 1, total: cur.total + r.rating });
+  const groups = new Map<string, Review[]>();
+  for (const review of all) {
+    const group = groups.get(review.productId) ?? [];
+    group.push(review);
+    groups.set(review.productId, group);
   }
-  return Object.fromEntries(
-    [...sums].map(([id, { count, total }]) => [id, { count, average: Math.round((total / count) * 10) / 10 }]),
-  );
+  return Object.fromEntries([...groups].map(([id, reviews]) => [id, summarize(reviews)]));
 }
 
 export interface NewReviewInput {

@@ -1,0 +1,38 @@
+[
+  {
+    "source": "imgi_18_sg-11134202-7reqg-m8078rmicjli2f.jpg",
+    "output": "public/uploads/cortina-rgb-extra-18-pt.png",
+    "tool": "image_gen",
+    "prompt": "Use case: text-localization. Translate all marketing text into Portuguese: DIY Mode = Modo criativo; You can draw... = Crie desenhos personalizados com suas cores favoritas. APP Scene: More than 100 scene modes = Aplicativo: mais de 100 cenas; Create a comfortable... = Crie uma atmosfera aconchegante e festiva para sua família. Music Mode = Modo musical; Built-in microphone,4 vibrant music modes = Microfone integrado e 4 modos musicais. Custom Lights = Cores personalizáveis; Over 16 million Colors = Mais de 16 milhões de cores. Timer/Schedule = Agendamento; Turn on/off automatically at preset time = Liga e desliga no horário programado. Control Mode = Controle; Remote / Local key = Controle remoto ou botão. Preserve composition, product, colors and actual phone app screenshots. Translate marketing copy only."
+  },
+  {
+    "source": "imgi_19_sg-11134202-7rep1-m8078s0xrel362.jpg",
+    "output": "public/uploads/cortina-rgb-extra-19-pt.png",
+    "tool": "image_gen",
+    "prompt": "Use case: text-localization. Replace marketing text: APP \"GROUP CONTROL\" = \"CONTROLE EM GRUPO PELO APP\"; Up to 4 sets of Curtain Lights can be controlled at the same time = \"Controle até 4 cortinas ao mesmo tempo\"; GIF or Static Display = \"Animações ou imagens estáticas\". Preserve composition, product, colors and actual phone app screenshots. Translate marketing copy only."
+  },
+  {
+    "source": "imgi_21_sg-11134202-7repc-m8078szcfuzrfd.jpg",
+    "output": "public/uploads/cortina-rgb-extra-21-pt.png",
+    "tool": "image_gen",
+    "prompt": "Use case: text-localization. Translate APP Control = \"Controle pelo aplicativo\"; multiple modes for different scenes = \"Vários modos para diferentes ambientes\". Preserve composition, product, colors and actual phone app screenshots. Translate marketing copy only."
+  },
+  {
+    "source": "imgi_22_sg-11134202-7rep8-m8078ti7lhnm89.jpg",
+    "output": "public/uploads/cortina-rgb-extra-22-pt.png",
+    "tool": "image_gen",
+    "prompt": "Use case: text-localization. Translate four marketing captions: Music Sync = \"Sincronização musical\"; Pause/paly Function = \"Função pausar e reproduzir\"; Timer Function = \"Agendamento\"; Adjustable Brightness = \"Brilho ajustável\". Preserve composition, product, colors and actual phone app screenshots. Translate marketing copy only."
+  },
+  {
+    "source": "imgi_23_sg-11134202-7rep8-m8078tzewbdu7e.jpg",
+    "output": "public/uploads/cortina-rgb-extra-23-pt.png",
+    "tool": "image_gen",
+    "prompt": "Use case: text-localization. Translate only header Over 100 Dynamic Scene Modes = \"Mais de 100 cenas dinâmicas\". Preserve composition, product, colors and actual phone app screenshots. Translate marketing copy only."
+  },
+  {
+    "source": "imgi_24_sg-11134202-7reo1-m8078uh66a3r51.jpg",
+    "output": "public/uploads/cortina-rgb-extra-24-pt.png",
+    "tool": "image_gen",
+    "prompt": "Use case: text-localization. Translate only marketing caption Over 108 Holiday Pattern Lights = \"Mais de 108 desenhos para festas\". Preserve composition, product, colors and actual phone app screenshots. Translate marketing copy only."
+  }
+]

@@ -14,7 +14,7 @@ export interface CardOptions {
 
 function ratingHtml(product: Product): string {
   const summary = state.summaries[product.id];
-  if (!summary || summary.count === 0) return '';
+  if (!summary || summary.count === 0 || summary.ratedCount === 0) return '';
   const full = Math.round(summary.average);
   const stars = Array.from({ length: 5 }, (_, i) => `<i class="${i < full ? 'ph-fill' : 'ph'} ph-star"></i>`).join('');
   return `
