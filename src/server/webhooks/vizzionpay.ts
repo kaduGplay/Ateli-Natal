@@ -1,4 +1,4 @@
-import { validVizzionPayCallback, type VizzionPayCallbackAuth } from './vizzionpay-callback.js';
+import { validRegisteredVizzionPayWebhook, validVizzionPayCallback, type VizzionPayCallbackAuth } from './vizzionpay-callback.js';
 import { queueMetaPurchase } from '../services/meta-conversions.js';
 import { createHash, timingSafeEqual } from 'node:crypto';
 import type { Order } from '../../shared/types.js';
@@ -16,6 +16,7 @@ interface Receipt {
 
 async function authenticate(body: unknown, auth?: VizzionPayCallbackAuth): Promise<void> {
   const payload = object(body);
+  if (validRegisteredVizzionPayWebhook(auth)) return;
   if (validVizzionPayCallback(auth)) {
     const transactionId = object(payload.transaction).id;
     if (typeof transactionId !== 'string' || !transactionId) throw new HttpError(400, 'Transação inválida.');
@@ -68,13 +69,17 @@ export async function reconcileVizzionPayOrder(orderId: string): Promise<void> {
   await queueMetaPurchase(orderId);
 }
 
-export async function receiveVizzionPayWebhook(body: unknown, expectedEvent?: VizzionPayEvent, auth?: VizzionPayCallbackAuth): Promise<{ accepted: true }> {
+export async function receiveVizzionPayWebhook(body: unknown, expectedEvent?: VizzionPayEvent, auth?: VizzionPayCallbackAuth): Promise<{ accepted: true; ignored?: boolean }> {
   console.info('vizzionpay_webhook_received');
   try {
     await authenticate(body, auth);
   } catch (error) {
     console.warn('vizzionpay_webhook_rejected', error instanceof HttpError ? error.status : 500);
     throw error;
+  }
+  if (validRegisteredVizzionPayWebhook(auth) && object(body).event !== 'TRANSACTION_PAID') {
+    console.info('vizzionpay_webhook_ignored');
+    return { accepted: true, ignored: true };
   }
   let payload;
   try { payload = validateVizzionPayPayload(body); } catch (error) {

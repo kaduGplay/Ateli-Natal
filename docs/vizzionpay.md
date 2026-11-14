@@ -52,3 +52,14 @@ O identificador da transação, o pedido e o valor devem coincidir. Campos opcio
 de cliente, oferta, assinatura recorrente e rastreamento não bloqueiam um evento
 financeiro válido. Recibos são deduplicados e não guardam tokens ou assinaturas.
 O painel considera a data da confirmação para as vendas do período.
+
+## Cadastro manual no painel da operadora
+
+O cadastro manual usa uma URL com `hookKey`, derivada do segredo privado por HMAC
+em um contexto separado dos callbacks individuais. Essa URL é uma credencial de
+entrega e não deve ser incluída em arquivos públicos, logs ou no repositório.
+Eventos de teste autenticados não confirmam pedidos; chamadas sem uma credencial válida são recusadas;
+somente notificações financeiras válidas e autenticadas podem confirmar uma venda.
+Um teste com ID fictício pode receber 200 sem criar pedido, receita ou conversão.
+Recibos autenticados de transações ainda não salvas ficam disponíveis para
+reconciliação posterior, cobrindo o intervalo entre a criação e a persistência.

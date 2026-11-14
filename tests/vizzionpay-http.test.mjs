@@ -95,3 +95,28 @@ test('signed HTTP callback updates checkout, status and purchase summary with a 
  const conversions=JSON.parse(await readFile(path.join(dir,'meta-conversions.json'),'utf8'));assert.equal(conversions.filter(x=>x.event.event_id===id).length,1);
  delete process.env.VIZZIONPAY_CALLBACK_SECRET;
 });
+
+test('registered webhook accepts delivery tests without counting fictitious transactions as sales',async()=>{
+ process.env.VIZZIONPAY_CALLBACK_SECRET='fake-registered-webhook-secret';
+ const {registeredVizzionPayWebhookUrl}=await import('../dist/server/server/webhooks/vizzionpay-callback.js');
+ const url=registeredVizzionPayWebhookUrl('https://store.example.com');
+ const endpoint=url.pathname+url.search;
+ const before=await readFile(path.join(dir,'orders.json'),'utf8');
+ const beforeConversions=await readFile(path.join(dir,'meta-conversions.json'),'utf8');
+ assert.equal((await call('POST',endpoint,{event:'WEBHOOK_TEST'})).status,200);
+ const fictitious={event:'TRANSACTION_PAID',token:'provider-test-token',transaction:{id:'fictional-transaction-test',status:'COMPLETED',paymentMethod:'PIX',amount:10,currency:'BRL'}};
+ assert.equal((await call('POST',endpoint,fictitious)).status,200);
+ assert.equal(await readFile(path.join(dir,'orders.json'),'utf8'),before);
+ assert.equal(await readFile(path.join(dir,'meta-conversions.json'),'utf8'),beforeConversions);
+
+ globalThis.fetch=async()=>Response.json({transactionId:'fake-registered-real-tx',status:'OK',pix:{code:'000201FAKE-REGISTERED-DO-NOT-PAY',expiresAt:new Date(Date.now()+1800000).toISOString()}});
+ const pending=await call('POST','/api/checkout/pix',{requestId:'registered-real-request-00001',customer:{name:'Teste',email:'test@example.com',document:'52998224725',phone:'11987654321'},address:{cep:'01310100',street:'Rua Teste',number:'1',complement:'',neighborhood:'Centro',city:'São Paulo',state:'SP'},items:[{productId:'http-test-product',qty:1,variant:'',isBump:false}],shippingOptionId:'free',coupons:[]});
+ assert.equal(pending.status,200);const orderId=pending.body.data.orderId;
+ const actual={event:'TRANSACTION_PAID',transaction:{id:'fake-registered-real-tx',status:'COMPLETED',paymentMethod:'PIX',amount:90,currency:'BRL'}};
+ assert.equal((await call('POST',endpoint,{...actual,transaction:{...actual.transaction,amount:1}})).status,400);
+ assert.equal((await call('GET',`/api/orders/${orderId}/status`)).body.data.status,'pending');
+ assert.equal((await call('POST',endpoint,actual)).status,200);
+ assert.equal((await call('GET',`/api/orders/${orderId}/status`)).body.data.status,'paid');
+ url.searchParams.set('hookKey','0'.repeat(64));assert.equal((await call('POST',url.pathname+url.search,{event:'WEBHOOK_TEST'})).status,401);
+ delete process.env.VIZZIONPAY_CALLBACK_SECRET;
+});
