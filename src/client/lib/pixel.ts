@@ -1,3 +1,4 @@
+import { CURTAIN_PRODUCT_ID, CURTAIN_PIXEL_ID } from '../../shared/meta-pixels';
 /**
  * Pixel da Meta (Facebook) com eventos padrão de e-commerce.
  * Se `metaPixelId` estiver vazio nas configurações, todas as funções viram no-op.
@@ -27,6 +28,9 @@ export interface PixelItem {
 
 const CURRENCY = 'BRL';
 let ready = false;
+let defaultPixelId = '';
+let curtainReady = false;
+let curtainPageUrl = '';
 let lastPageViewUrl = '';
 
 function loadFbevents(): void {
@@ -47,10 +51,22 @@ function loadFbevents(): void {
   document.head.appendChild(script);
 }
 
-function track(event: string, params?: Record<string, unknown>, eventId?: string): void {
+function send(pixelId: string, event: string, params: Record<string, unknown>, eventId?: string, custom = false): void {
+  const command = custom ? 'trackSingleCustom' : 'trackSingle';
+  if (eventId) window.fbq?.(command, pixelId, event, params, { eventID: eventId });
+  else window.fbq?.(command, pixelId, event, params);
+}
+
+function track(event: string, params: Record<string, unknown> = {}, eventId?: string, custom = false): void {
   if (!ready || !window.fbq) return;
-  if (eventId) window.fbq('track', event, params ?? {}, { eventID: eventId });
-  else window.fbq('track', event, params ?? {});
+  send(defaultPixelId, event, params, eventId, custom);
+  if (!Array.isArray(params.content_ids) || !params.content_ids.includes(CURTAIN_PRODUCT_ID)) return;
+  if (!curtainReady) { window.fbq('init', CURTAIN_PIXEL_ID); curtainReady = true; }
+  if (event === 'ViewContent' && curtainPageUrl !== location.href) {
+    curtainPageUrl = location.href;
+    send(CURTAIN_PIXEL_ID, 'PageView', {});
+  }
+  send(CURTAIN_PIXEL_ID, event, params, eventId, custom);
 }
 
 const contents = (items: PixelItem[]): Array<{ id: string; quantity: number; item_price: number }> =>
@@ -64,6 +80,7 @@ export const pixel = {
     if (!pixelId || ready) return;
     loadFbevents();
     window.fbq?.('init', pixelId);
+    defaultPixelId = pixelId;
     ready = true;
     lastPageViewUrl = location.href;
     track('PageView');
@@ -88,7 +105,7 @@ export const pixel = {
   },
 
   viewCategory(slug: string): void {
-    if (ready) window.fbq?.('trackCustom', 'ViewCategory', { content_category: slug });
+    track('ViewCategory', { content_category: slug }, undefined, true);
   },
 
   addToCart(item: PixelItem): void {
@@ -120,6 +137,20 @@ export const pixel = {
   addPaymentInfo(items: PixelItem[], value: number): void {
     track('AddPaymentInfo', { content_type: 'product', content_ids: ids(items), contents: contents(items), value, currency: CURRENCY });
   },
+
+  pixGenerated(orderId: string, value: number, items: PixelItem[] = []): void {
+    if (!ready || !window.fbq) return;
+    const key = `metaPixGenerated:${orderId}`;
+    try { if (sessionStorage.getItem(key)) return; } catch { /* Optional storage. */ }
+    track('PixGenerated', { value, currency: CURRENCY, content_ids: ids(items) }, `${orderId}:pix-generated`, true);
+    try { sessionStorage.setItem(key, '1'); } catch { /* Stable event ID remains available. */ }
+  },
+
+  pixCodeCopied(value: number, items: PixelItem[] = []): void {
+    track('PixCodeCopied', { value, currency: CURRENCY, content_ids: ids(items) }, undefined, true);
+  },
+
+  contact(channel: string): void { track('Contact', { content_name: channel }); },
 
   /** `orderId` vira eventID para deduplicar com a API de Conversões no futuro. */
   purchase(orderId: string, items: PixelItem[], value: number): boolean {

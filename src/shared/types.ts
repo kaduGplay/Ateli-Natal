@@ -191,7 +191,10 @@ export interface OrderItem {
   isBump: boolean;
 }
 
+export interface MetaCheckoutContext { fbp?: string; fbc?: string; userAgent?: string; clientIp?: string }
+
 export interface Order {
+  meta?: MetaCheckoutContext;
   id: string;
   createdAt: string;
   status: PaymentStatus;
@@ -214,7 +217,7 @@ export interface CheckoutResponse {
 
 export interface OrderPaymentResponse extends CheckoutResponse {
   status: PaymentStatus;
-  items: Array<Pick<OrderItem, 'name' | 'variant' | 'unitPrice' | 'qty'>>;
+  items: Array<Pick<OrderItem, 'productId' | 'name' | 'variant' | 'unitPrice' | 'qty'>>;
   shipping: Pick<Order['shipping'], 'name' | 'deliveryDays'>;
 }
 

@@ -63,7 +63,7 @@ routes.get('/orders/:id/payment', (req, res, next) => {
   const order = await resolvePaymentOrder(id);
   return {
     orderId: order.id, status: order.status, totals: order.totals, pix: order.payment.charge,
-    items: order.items.map(({ name, variant, unitPrice, qty }) => ({ name, variant, unitPrice, qty })),
+    items: order.items.map(({ productId, name, variant, unitPrice, qty }) => ({ productId, name, variant, unitPrice, qty })),
     shipping: { name: order.shipping.name, deliveryDays: order.shipping.deliveryDays },
   };
 }));

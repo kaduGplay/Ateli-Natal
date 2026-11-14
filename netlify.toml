@@ -31,3 +31,6 @@
   for = "/pagamento.html"
   [headers.values]
     Referrer-Policy = "no-referrer"
+
+[functions."meta-conversions"]
+  schedule = "*/5 * * * *"
