@@ -205,7 +205,7 @@ export interface Order {
   coupons: AppliedCoupon[];
   shipping: { optionId: string; name: string; price: number; deliveryDays: number };
   totals: OrderTotals;
-  payment: { method: 'pix'; charge: PixCharge; providerRef: string; provider?: 'voidpay' | 'dev'; webhookToken?: string };
+  payment: { method: 'pix'; charge: PixCharge; providerRef: string; provider?: 'voidpay' | 'vizzionpay' | 'dev'; webhookToken?: string };
   trackingCode?: string;
 }
 

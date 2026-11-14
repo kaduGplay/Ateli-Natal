@@ -4,8 +4,8 @@ import { config } from './config.js';
 import { databaseUrl, documentTable, getDatabase } from './database.js';
 import { HttpError } from './errors.js';
 
-const mutable = new Set(['orders', 'pix-attempts', 'voidpay-events', 'meta-conversions', 'reviews']);
-const privateData = new Set(['orders', 'pix-attempts', 'voidpay-events', 'meta-conversions']);
+const mutable = new Set(['orders', 'pix-attempts', 'voidpay-events', 'vizzionpay-events', 'meta-conversions', 'reviews']);
+const privateData = new Set(['orders', 'pix-attempts', 'voidpay-events', 'vizzionpay-events', 'meta-conversions']);
 
 const locks = new Map<string, Promise<unknown>>();
 

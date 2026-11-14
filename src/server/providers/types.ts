@@ -16,7 +16,7 @@ export interface PixChargeInput {
 }
 
 export interface PixChargeResult {
-  provider?: 'voidpay' | 'dev';
+  provider?: 'voidpay' | 'vizzionpay' | 'dev';
   expiresAt?: string;
   webhookToken?: string;
   /** Código "copia e cola" (EMV) que o cliente paga no app do banco. */

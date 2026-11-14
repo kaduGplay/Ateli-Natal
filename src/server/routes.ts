@@ -1,3 +1,4 @@
+import { receiveVizzionPayWebhook } from './webhooks/vizzionpay.js';
 import { Router, type NextFunction, type Request, type RequestHandler, type Response } from 'express';
 import type { ApiResponse, CheckoutRequest, OrderSummary } from '../shared/types.js';
 import { onlyDigits, isValidCep } from '../shared/validation.js';
@@ -20,6 +21,8 @@ function api<T>(fn: (req: Request) => Promise<T>): RequestHandler {
 }
 
 export const routes = Router();
+routes.post('/webhooks/vizzionpay', api(req => receiveVizzionPayWebhook(req.body, 'TRANSACTION_PAID')));
+routes.post('/webhooks/vizzionpay/paid', api(req => receiveVizzionPayWebhook(req.body, 'TRANSACTION_PAID')));
 routes.post('/webhooks/voidpay', api(req => receiveVoidPayWebhook(req.body, 'TRANSACTION_PAID')));
 routes.post('/webhooks/voidpay/created', api(req => receiveVoidPayWebhook(req.body, 'TRANSACTION_CREATED')));
 routes.post('/webhooks/voidpay/paid', api(req => receiveVoidPayWebhook(req.body, 'TRANSACTION_PAID')));

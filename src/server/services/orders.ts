@@ -1,9 +1,10 @@
+import { reconcileVizzionPayOrder } from '../webhooks/vizzionpay.js';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import type { CheckoutRequest, CheckoutResponse, Order, OrderStatusResponse } from '../../shared/types.js';
 import { isValidCep, isValidCpf, isValidEmail, isValidPhone, onlyDigits } from '../../shared/validation.js';
 import { config } from '../config.js';
 import { HttpError } from '../errors.js';
-import { payment, shipping } from '../providers/index.js';
+import { activePaymentProviderName, getPaymentProvider, payment, shipping } from '../providers/index.js';
 import { readJson, updateJson } from '../storage.js';
 import { getSettings, listProducts } from './catalog.js';
 import { findCoupon } from './coupons.js';
@@ -51,7 +52,7 @@ async function preparePixOrder(req: CheckoutRequest): Promise<Order> {
     coupons,
     shipping: { optionId: chosen.id, name: chosen.name, price: chosen.price, deliveryDays: chosen.deliveryDays },
     totals,
-    payment: { method: 'pix', charge: { copyPaste: '', expiresAt: expiresAt.toISOString() }, providerRef: '', provider: 'voidpay' },
+    payment: { method: 'pix', charge: { copyPaste: '', expiresAt: expiresAt.toISOString() }, providerRef: '', provider: activePaymentProviderName() },
   };
   return order;
 }
@@ -67,6 +68,7 @@ const inFlight = new Map<string, { fingerprint: string; promise: Promise<Checkou
 async function saveOrder(order: Order): Promise<CheckoutResponse> {
   await updateJson<Order[]>('orders', [], orders => orders.some(o => o.id === order.id) ? orders : [...orders, order]);
   await reconcileVoidPayOrder(order.id);
+  await reconcileVizzionPayOrder(order.id);
   return { orderId: order.id, totals: order.totals, pix: order.payment.charge };
 }
 
@@ -158,12 +160,13 @@ export async function resolvePaymentOrder(id: string): Promise<Order> {
 /** Consulta o gateway enquanto o pedido está pendente e persiste a mudança de status. */
 export async function refreshOrderStatus(id: string): Promise<OrderStatusResponse> {
   await reconcileVoidPayOrder(id);
+  await reconcileVizzionPayOrder(id);
   const order = await getOrder(id);
   if (!order) throw new HttpError(404, 'Pedido não encontrado.');
 
   let status = order.status;
   if (status === 'pending') {
-    status = await payment.getPaymentStatus(order.payment.providerRef);
+    status = await getPaymentProvider(order.payment.provider ?? 'voidpay').getPaymentStatus(order.payment.providerRef);
     if (status === 'pending' && Date.now() > new Date(order.payment.charge.expiresAt).getTime()) status = 'expired';
     if (status !== order.status) {
       await updateJson<Order[]>('orders', [], (orders) => orders.map((o) => (o.id === id && o.status === 'pending' ? { ...o, status } : o)));

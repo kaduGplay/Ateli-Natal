@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Loja Ateliê Natal em TypeScript (API Express + front-end tipado)",
+  "description": "Loja Ateli\u00ea Natal em TypeScript (API Express + front-end tipado)",
   "scripts": {
     "build:client": "node scripts/build-client.mjs",
     "build:server": "tsc -p tsconfig.server.json",
@@ -15,10 +15,11 @@
     "test:netlify": "node --test tests/netlify.test.mjs",
     "test:checkout": "node --test tests/checkout-browser.test.mjs tests/categories-browser.test.mjs",
     "sync": "node scripts/sync-github.mjs",
-    "verify": "npm run typecheck && npm run build && npm run test:payments && npm run test:netlify && npm run test:checkout && npm run test:reviews && npm run test:meta && npm run test:volume",
+    "verify": "npm run typecheck && npm run build && npm run test:payments && npm run test:netlify && npm run test:checkout && npm run test:reviews && npm run test:meta && npm run test:volume && npm run test:vizzion",
     "test:reviews": "node --test tests/reviews-import.test.mjs",
     "test:meta": "node --test tests/meta-pixel.test.mjs tests/meta-conversions.test.mjs",
-    "test:volume": "node --test tests/volume-discount.test.mjs"
+    "test:volume": "node --test tests/volume-discount.test.mjs",
+    "test:vizzion": "node --test tests/vizzionpay.test.mjs"
   },
   "dependencies": {
     "@noble/hashes": "^2.0.1",
