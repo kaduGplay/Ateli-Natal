@@ -42,7 +42,9 @@ function updateTotals(): void {
   text('chkSummaryTotalPreview', brl(total));
   must('btnPixLabel').innerHTML = `CONCLUIR PEDIDO COM PIX POR <span id="chkTotalBtn">${esc(brl(payable))}</span> (${getStoreSettings().pixDiscountPercent}% OFF)`;
   display('chkSidebarDiscountLine', discount > 0);
-  must('chkSidebarDiscountLine').innerHTML = `<div class="line" style="color:#15803d"><span>Descontos (oferta e cupons)</span><strong>− ${esc(brl(discount))}</strong></div>`;
+  const volume = Math.min(discount, cart.volumeDiscount());
+  const couponSavings = round(discount - volume);
+  must('chkSidebarDiscountLine').innerHTML = (volume ? `<div class="line" style="color:#15803d"><span>25% de desconto aplicado · Cortinas</span><strong>− ${esc(brl(volume))}</strong></div>` : '') + (couponSavings ? `<div class="line" style="color:#15803d"><span>Desconto dos cupons</span><strong>− ${esc(brl(couponSavings))}</strong></div>` : '');
   must('appliedCouponsList').innerHTML = coupons.map(c => `<span class="checkout-coupon">${esc(c.code)} <button type="button" data-action="coupon-remove" data-code="${esc(c.code)}" aria-label="Remover cupom ${esc(c.code)}">×</button></span>`).join('');
   updateContinue();
 }

@@ -1,3 +1,4 @@
+import { volumeDiscount } from '../../shared/volume-discount';
 import { CURTAIN_PRODUCT_ID } from '../../shared/meta-pixels';
 import type { Product, ProductVariationGroup, ProductVariationOption } from '../../shared/types';
 import { api, ApiError } from '../lib/api';
@@ -173,9 +174,24 @@ export function addCurrentToCart(): void {
   openDrawer();
 }
 
+function updateQuantityOffer(): void {
+  const status = byId('pdpVolumeStatus');
+  if (!current || !status) return;
+  const qty = Math.max(1, parseInt(must<HTMLInputElement>('pdpQty').value, 10) || 1);
+  const discount = volumeDiscount([{ productId: current.id, qty, unitPrice: current.price }]);
+  const total = Math.round((current.price * qty - discount) * 100) / 100;
+  status.hidden = !discount;
+  status.innerHTML = discount ? `<strong>25% de desconto aplicado!</strong><br><s>${brl(current.price * qty)}</s> · <strong>${qty} cortinas por ${brl(total)}</strong><br>Você economiza ${brl(discount)}. Valor antes do frete e do desconto de Pix.` : '';
+  const stickyPrice = byId('pdpStickyPrice');
+  const stickyLabel = byId('pdpStickyPriceLabel');
+  if (stickyPrice) stickyPrice.textContent = brl(discount ? total : current.price);
+  if (stickyLabel) stickyLabel.textContent = discount ? `Total de ${qty} unidades · 25% OFF` : 'Preço por unidade';
+}
+
 export function changeQty(delta: number): void {
   const input = must<HTMLInputElement>('pdpQty');
   input.value = String(Math.max(1, (parseInt(input.value, 10) || 1) + delta));
+  updateQuantityOffer();
 }
 
 function renderCrossSell(product: Product): void {
@@ -254,6 +270,7 @@ function renderProduct(product: Product): void {
   must<HTMLInputElement>('pdpQty').value = '1';
   renderCrossSell(product);
   initStickyCta(product);
+  updateQuantityOffer();
   void loadReviews(product.id);
   pixel.viewContent({ id: product.id, name: product.name, price: product.price, qty: 1 }, product.category);
 }
@@ -319,6 +336,8 @@ export async function calculatePdpShipping(): Promise<void> {
 }
 
 export function initPdpInputs(): void {
+  must('pdpQty').addEventListener('input', updateQuantityOffer);
+  must('pdpQty').addEventListener('change', updateQuantityOffer);
   const cep = must<HTMLInputElement>('pdpCep');
   cep.addEventListener('input', () => (cep.value = maskCep(cep.value)));
   cep.addEventListener('keydown', (e) => {
@@ -344,8 +363,8 @@ function initStickyCta(product: Product): void {
   }
   el.innerHTML = `
     <div style="flex:1;min-width:0;">
-      <div style="font-size:11px;color:#64748b;font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Preço</div>
-      <div style="font-size:18px;font-weight:800;color:#1e293b;line-height:1;">${brl(product.price)}</div>
+      <div id="pdpStickyPriceLabel" style="font-size:11px;color:#64748b;font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Preço por unidade</div>
+      <div id="pdpStickyPrice" style="font-size:18px;font-weight:800;color:#1e293b;line-height:1;">${brl(product.price)}</div>
     </div>
     <button type="button" data-action="sticky-buy" style="flex-shrink:0;background:#0a3b2c;color:#fff;border:none;border-radius:10px;padding:12px 20px;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;">
       <i class="ph-fill ph-shopping-bag" style="font-size:18px;"></i> Comprar Agora

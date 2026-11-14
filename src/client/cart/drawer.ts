@@ -84,7 +84,13 @@ export function renderDrawer(): void {
   const totalEl = byId('cartDrawerTotal');
   if (totalEl) totalEl.textContent = brl(total - cart.volumeDiscount());
   const subtotalEl = byId('cartDrawerSubtotal');
-  if (subtotalEl) subtotalEl.textContent = cart.volumeDiscount() ? `${brl(total - cart.volumeDiscount())} (economia de ${brl(cart.volumeDiscount())})` : brl(total);
+  if (subtotalEl) subtotalEl.textContent = brl(total);
+  const volumeRow = byId('cartVolumeDiscount');
+  if (volumeRow) {
+    volumeRow.hidden = !cart.volumeDiscount();
+    volumeRow.style.display = cart.volumeDiscount() ? 'flex' : 'none';
+    volumeRow.innerHTML = `<span>25% de desconto aplicado</span><strong>− ${brl(cart.volumeDiscount())}</strong>`;
+  }
 
   renderFreeShippingBar(total);
   renderOrderBumps(catalog);
