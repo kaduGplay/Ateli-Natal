@@ -1,3 +1,4 @@
+import { volumeDiscount } from '../../shared/volume-discount.js';
 import type { AppliedCoupon, CheckoutRequest, OrderItem, OrderTotals, Product, StoreSettings } from '../../shared/types.js';
 import { HttpError } from '../errors.js';
 
@@ -35,7 +36,7 @@ export function couponDiscount(coupons: AppliedCoupon[], subtotal: number): numb
 
 export function computeTotals(items: OrderItem[], coupons: AppliedCoupon[], shipping: number, pixPercent: number): OrderTotals {
   const subtotal = round2(items.reduce((sum, i) => sum + i.unitPrice * i.qty, 0));
-  const discount = couponDiscount(coupons, subtotal);
+  const discount = round2(Math.min(subtotal, couponDiscount(coupons, subtotal) + volumeDiscount(items)));
   const total = round2(subtotal - discount + shipping);
   const payable = round2(total * (1 - pixPercent / 100));
   return { subtotal, discount, shipping, total, pixDiscount: round2(total - payable), payable };

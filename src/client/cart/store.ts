@@ -1,3 +1,4 @@
+import { volumeDiscount } from '../../shared/volume-discount';
 import type { CartLine } from '../../shared/types';
 import { pixel } from '../lib/pixel';
 
@@ -42,6 +43,7 @@ const lineIdOf = (i: Pick<AddToCartInput, 'productId' | 'variant' | 'isBump'>): 
 
 export const cart = {
   lines: (): CartLine[] => lines,
+  volumeDiscount: (): number => volumeDiscount(lines.map(l => ({ ...l, unitPrice: l.price }))),
   count: (): number => lines.reduce((sum, l) => sum + l.qty, 0),
   total: (): number => lines.reduce((sum, l) => sum + l.price * l.qty, 0),
   has: (productId: string, isBump = false): boolean => lines.some((l) => l.productId === productId && l.isBump === isBump),

@@ -33,7 +33,7 @@ const display = (id: string, show: boolean, mode = 'block'): void => { must(id).
 
 function updateTotals(): void {
   const subtotal = round(cart.total());
-  const discount = round(Math.min(subtotal, coupons.reduce((sum, c) => sum + (c.type === 'percent' ? subtotal * c.value / 100 : c.value), 0)));
+  const discount = round(Math.min(subtotal, cart.volumeDiscount() + coupons.reduce((sum, c) => sum + (c.type === 'percent' ? subtotal * c.value / 100 : c.value), 0)));
   const total = round(subtotal - discount + (selected?.price ?? 0));
   const payable = round(total * (1 - getStoreSettings().pixDiscountPercent / 100));
   text('chkSidebarSub', brl(subtotal));
@@ -42,7 +42,7 @@ function updateTotals(): void {
   text('chkSummaryTotalPreview', brl(total));
   must('btnPixLabel').innerHTML = `CONCLUIR PEDIDO COM PIX POR <span id="chkTotalBtn">${esc(brl(payable))}</span> (${getStoreSettings().pixDiscountPercent}% OFF)`;
   display('chkSidebarDiscountLine', discount > 0);
-  must('chkSidebarDiscountLine').innerHTML = `<div class="line" style="color:#15803d"><span>Desconto dos cupons</span><strong>− ${esc(brl(discount))}</strong></div>`;
+  must('chkSidebarDiscountLine').innerHTML = `<div class="line" style="color:#15803d"><span>Descontos (oferta e cupons)</span><strong>− ${esc(brl(discount))}</strong></div>`;
   must('appliedCouponsList').innerHTML = coupons.map(c => `<span class="checkout-coupon">${esc(c.code)} <button type="button" data-action="coupon-remove" data-code="${esc(c.code)}" aria-label="Remover cupom ${esc(c.code)}">×</button></span>`).join('');
   updateContinue();
 }

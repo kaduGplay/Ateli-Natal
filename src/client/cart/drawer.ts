@@ -82,9 +82,9 @@ export function renderDrawer(): void {
   const count = byId('cartDrawerCount');
   if (count) count.textContent = qty === 1 ? '1 item' : `${qty} itens`;
   const totalEl = byId('cartDrawerTotal');
-  if (totalEl) totalEl.textContent = brl(total);
+  if (totalEl) totalEl.textContent = brl(total - cart.volumeDiscount());
   const subtotalEl = byId('cartDrawerSubtotal');
-  if (subtotalEl) subtotalEl.textContent = brl(total);
+  if (subtotalEl) subtotalEl.textContent = cart.volumeDiscount() ? `${brl(total - cart.volumeDiscount())} (economia de ${brl(cart.volumeDiscount())})` : brl(total);
 
   renderFreeShippingBar(total);
   renderOrderBumps(catalog);

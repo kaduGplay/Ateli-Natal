@@ -1,3 +1,4 @@
+import { CURTAIN_PRODUCT_ID } from '../../shared/meta-pixels';
 import type { Product, ProductVariationGroup, ProductVariationOption } from '../../shared/types';
 import { api, ApiError } from '../lib/api';
 import { byId, esc, must, qs, qsa } from '../lib/dom';
@@ -198,6 +199,8 @@ function renderPricing(product: Product): void {
     old.style.display = pct ? 'block' : 'none';
     old.textContent = pct && product.oldPrice ? brl(product.oldPrice) : '';
   }
+  const volumeOffer = byId('pdpVolumeOffer');
+  if (volumeOffer) volumeOffer.hidden = product.id !== CURTAIN_PRODUCT_ID;
   setText('.current-price', brl(product.price));
   const inst = installments(product.price);
   setHtml('.installments', inst.count > 1 ? `em até <strong>${inst.count}x de ${brl(inst.value)} sem juros</strong> no cartão` : 'à vista');
