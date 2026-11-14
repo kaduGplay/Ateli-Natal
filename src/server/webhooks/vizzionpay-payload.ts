@@ -62,65 +62,27 @@ function strings(value: Record<string, unknown>, keys: string[]): void { keys.fo
 function nullableString(value: unknown): void { if (value !== null) string(value); }
 function enumeration(value: unknown, allowed: readonly string[]): void { if (!allowed.includes(value as string)) fail(); }
 
-/** Valida o evento TRANSACTION_PAID documentado pela Vizzion Pay. */
+/** Valida os campos financeiros necessários; metadados de checkout não são obrigatórios. */
 export function validateVizzionPayPayload(raw: unknown): VizzionPayPayload {
   const p = object(raw);
   enumeration(p.event, ['TRANSACTION_PAID']);
-  strings(p, ['token', 'offerCode', 'checkoutUrl']);
-  const client = object(p.client);
-  strings(client, ['id', 'name', 'email', 'phone']);
-  nullableString(client.cpf); nullableString(client.cnpj);
-  if (client.address !== null) {
-    const address = object(client.address);
-    strings(address, ['country', 'zipCode', 'state', 'city', 'neighborhood', 'street', 'number']);
-    if (address.complement !== undefined) nullableString(address.complement);
-  }
+  if (p.token !== undefined) string(p.token, true);
   const t = object(p.transaction);
   string(t.id, true);
-  if (t.identifier !== undefined) string(t.identifier);
-  enumeration(t.status, ['COMPLETED', 'FAILED', 'PENDING', 'REFUNDED', 'CHARGED_BACK']);
-  enumeration(t.paymentMethod, ['CREDIT_CARD', 'PIX', 'BOLETO', 'CRYPTO']);
-  for (const k of ['originalAmount', 'amount', 'exchangeRate']) number(t[k]);
-  if (t.commissionAmount !== undefined) number(t.commissionAmount);
-  number(t.installments, true);
-  strings(t, ['originalCurrency', 'currency']);
-  date(t.createdAt);
-  if (t.payedAt !== null) date(t.payedAt);
-  if (p.event === 'TRANSACTION_PAID' && (t.status !== 'COMPLETED' || !t.payedAt)) fail();
-  if (t.pixInformation != null) {
-    const pix = object(t.pixInformation);
-    if (pix.id !== undefined) string(pix.id);
-    string(pix.qrCode); nullableString(pix.endToEndId);
-  }
-  if (t.pixMetadata !== undefined) {
-    const metadata = object(t.pixMetadata);
-    for (const key of ['payerName', 'payerDocument', 'payerBankName', 'payerBankAccount', 'payerBankBranch', 'receiverName', 'receiverDocument', 'receiverBankName', 'receiverBankAccount', 'receiverBankBranch']) {
-      if (metadata[key] !== undefined) string(metadata[key]);
-    }
-  }
-  if (t.boletoInformation != null) {
-    const boleto = object(t.boletoInformation);
-    strings(boleto, ['transactionId', 'id', 'barcode', 'digitableLine', 'pdfUrl', 'instructions']);
-    date(boleto.createdAt); date(boleto.updatedAt);
-  }
-  const subscription = p.subscription !== undefined ? p.subscription : t.subscription;
-  if (subscription !== null) {
-    const sub = object(subscription);
-    strings(sub, ['id', 'identifier']); date(sub.startAt);
-    number(sub.cycle, true); number(sub.intervalCount, true);
-    enumeration(sub.intervalType, ['DAYS', 'WEEKS', 'MONTHS', 'YEARS']);
-    enumeration(sub.status, ['ACTIVE', 'INACTIVE', 'CANCELED']);
-  }
-  const items = p.orderItems !== undefined ? p.orderItems : t.orderItems;
-  if (!Array.isArray(items)) fail();
-  for (const item of items) {
-    const i = object(item); string(i.id); number(i.price);
-    strings(object(i.product), ['id', 'name', 'externalId']);
-  }
-  const track = object(p.trackProps !== undefined ? p.trackProps : t.trackProps);
-  for (const key of ['utm_id', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbc', 'fbp', 'ip', 'country', 'user_agent', 'zip_code', 'city', 'state']) {
-    if (track[key] !== undefined) string(track[key]);
-  }
-  if (track.isUpsell !== undefined && typeof track.isUpsell !== 'boolean') fail();
-  return { ...p, subscription, orderItems: items, trackProps: track } as unknown as VizzionPayPayload;
+  if (t.identifier !== undefined) string(t.identifier, true);
+  enumeration(t.status, ['COMPLETED']);
+  enumeration(t.paymentMethod, ['PIX']);
+  number(t.amount);
+  if ((t.amount as number) <= 0) fail();
+  enumeration(t.currency, ['BRL']);
+  if (t.originalAmount !== undefined) number(t.originalAmount);
+  if (t.originalCurrency !== undefined) enumeration(t.originalCurrency, ['BRL']);
+  if (t.createdAt !== undefined) date(t.createdAt);
+  if (t.payedAt != null) date(t.payedAt);
+  return { event: p.event, token: p.token,
+    transaction: { id: t.id, identifier: t.identifier, status: t.status, paymentMethod: t.paymentMethod,
+      amount: t.amount, currency: t.currency, originalAmount: t.originalAmount ?? t.amount,
+      originalCurrency: t.originalCurrency ?? t.currency, payedAt: t.payedAt ?? null,
+      createdAt: t.createdAt },
+  } as unknown as VizzionPayPayload;
 }

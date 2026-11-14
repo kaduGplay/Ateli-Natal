@@ -36,3 +36,19 @@ cobrança real foi criada durante a implementação.
 Na Netlify, as credenciais são passadas como segredos de deploy restritos às funções.
 Cada novo deploy deve preservar também os segredos dos provedores anteriores para
 permitir a confirmação e recuperação dos Pix pendentes já emitidos.
+
+## Confirmação automática por callback assinado
+
+`VIZZIONPAY_CALLBACK_SECRET` é um segredo aleatório privado e persistente no Netlify.
+A URL enviada em `callbackUrl` inclui o identificador do pedido e uma assinatura
+HMAC-SHA256 específica desse pedido; o segredo e as chaves da API nunca vão na URL.
+O receptor confere a assinatura e encontra o pedido ou a reserva de criação antes
+de aceitar a notificação. Isso permite autenticar também o callback que chega
+antes de a resposta da criação do Pix ter sido persistida. Callbacks antigos
+continuam aceitando o token retornado na cobrança ou o token global configurado.
+
+Somente `TRANSACTION_PAID` com `COMPLETED`, Pix e moeda BRL pode confirmar a compra.
+O identificador da transação, o pedido e o valor devem coincidir. Campos opcionais
+de cliente, oferta, assinatura recorrente e rastreamento não bloqueiam um evento
+financeiro válido. Recibos são deduplicados e não guardam tokens ou assinaturas.
+O painel considera a data da confirmação para as vendas do período.

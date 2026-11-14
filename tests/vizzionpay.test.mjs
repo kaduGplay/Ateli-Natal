@@ -99,7 +99,7 @@ test('VizzionPay: charge, durable idempotency, authentication, webhook ordering 
   await t.test('amount mismatch cannot approve an order', async () => {
     const other = await createPixOrder(payload('request-00000000000002'));
     const bad = event('tx-2'); bad.transaction.amount = 1;
-    await receiveVizzionPayWebhook(bad);
+    await assert.rejects(receiveVizzionPayWebhook(bad), { status: 400 });
     assert.equal((await getOrder(other.orderId)).status, 'pending');
   });
   await t.test('event before order persistence is reconciled after save', async () => {
@@ -155,4 +155,29 @@ test('VizzionPay: charge, durable idempotency, authentication, webhook ordering 
     globalThis.fetch = async () => Response.json({ transactionId: 'no-token', status: 'OK', pix: { code: '000201TEST-PIX', expiresAt } });
     await assert.rejects(new VizzionPayPaymentProvider().createPixCharge({ orderId: 'no-token', amount: 10, customer: payload().customer, expiresAt: new Date(expiresAt) }), { status: 502 });
   });
+  await t.test('signed callback confirms compact notifications before QR persistence, without a global token', async () => {
+    process.env.VIZZIONPAY_CALLBACK_SECRET = 'fake-callback-secret-long-enough-for-tests';
+    delete process.env.VIZZIONPAY_WEBHOOK_TOKEN;
+    let callback;
+    const minimal = { event:'TRANSACTION_PAID', transaction:{id:'signed-transaction',status:'COMPLETED',paymentMethod:'PIX',amount:143.91,currency:'BRL'} };
+    globalThis.fetch = async (_url, init) => {
+      callback = new URL(JSON.parse(init.body).callbackUrl);
+      const auth = Object.fromEntries(callback.searchParams);
+      assert.match(auth.signature,/^[a-f0-9]{64}$/);
+      assert.ok(!callback.href.includes(process.env.VIZZIONPAY_CALLBACK_SECRET));
+      await receiveVizzionPayWebhook(minimal, 'TRANSACTION_PAID', auth);
+      return Response.json({ transactionId:'signed-transaction',status:'OK',pix:{code:'000201TEST-SIGNED',expiresAt} });
+    };
+    const created = await createPixOrder(payload('signed-callback-request-000001'));
+    assert.equal((await getOrder(created.orderId)).status,'paid');
+    const auth = Object.fromEntries(callback.searchParams);
+    await receiveVizzionPayWebhook(minimal,'TRANSACTION_PAID',auth);
+    await assert.rejects(receiveVizzionPayWebhook(minimal,'TRANSACTION_PAID',{...auth,signature:'0'.repeat(64)}),{status:401});
+    await assert.rejects(receiveVizzionPayWebhook({...minimal,transaction:{...minimal.transaction,id:'another-transaction'}},'TRANSACTION_PAID',auth),{status:401});
+    await assert.rejects(receiveVizzionPayWebhook({...minimal,transaction:{...minimal.transaction,amount:1}},'TRANSACTION_PAID',auth),{status:400});
+    const persisted = await readFile(path.join(dir,'vizzionpay-events.json'),'utf8');
+    assert.ok(!persisted.includes(auth.signature) && !persisted.includes(process.env.VIZZIONPAY_CALLBACK_SECRET));
+    delete process.env.VIZZIONPAY_CALLBACK_SECRET;
+  });
+
 });

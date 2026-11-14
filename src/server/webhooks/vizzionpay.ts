@@ -1,3 +1,4 @@
+import { validVizzionPayCallback, type VizzionPayCallbackAuth } from './vizzionpay-callback.js';
 import { queueMetaPurchase } from '../services/meta-conversions.js';
 import { createHash, timingSafeEqual } from 'node:crypto';
 import type { Order } from '../../shared/types.js';
@@ -13,8 +14,18 @@ interface Receipt {
   transaction: Pick<VizzionPayTransaction, 'paymentMethod' | 'status' | 'amount' | 'currency' | 'originalAmount' | 'originalCurrency' | 'payedAt' | 'identifier'>;
 }
 
-async function authenticate(body: unknown): Promise<void> {
+async function authenticate(body: unknown, auth?: VizzionPayCallbackAuth): Promise<void> {
   const payload = object(body);
+  if (validVizzionPayCallback(auth)) {
+    const transactionId = object(payload.transaction).id;
+    if (typeof transactionId !== 'string' || !transactionId) throw new HttpError(400, 'Transação inválida.');
+    const orders = await readJson<Order[]>('orders', []);
+    const order = orders.find(o => o.id === auth!.orderId && o.payment.provider === 'vizzionpay');
+    const attempts = order ? [] : await readJson<PixAttempt[]>('pix-attempts', []);
+    const known = order || attempts.find(a => a.order.id === auth!.orderId && a.order.payment.provider === 'vizzionpay')?.order;
+    if (!known || known.payment.providerRef && known.payment.providerRef !== transactionId) throw new HttpError(401, 'Webhook não autorizado.');
+    return;
+  }
   const token = payload.token;
   if (typeof token !== 'string' || !token) throw new HttpError(401, 'Webhook não autorizado.');
   const transactionId = object(payload.transaction).id;
@@ -52,22 +63,39 @@ export async function reconcileVizzionPayOrder(orderId: string): Promise<void> {
       return order;
     }
     // Uma confirmação tardia pode chegar depois do prazo local do QR.
-    return { ...order, status: 'paid', paidAt: t.payedAt ?? undefined };
+    return { ...order, status: 'paid', paidAt: t.payedAt || receipt.receivedAt };
   }));
   await queueMetaPurchase(orderId);
 }
 
-export async function receiveVizzionPayWebhook(body: unknown, expectedEvent?: VizzionPayEvent): Promise<{ accepted: true }> {
+export async function receiveVizzionPayWebhook(body: unknown, expectedEvent?: VizzionPayEvent, auth?: VizzionPayCallbackAuth): Promise<{ accepted: true }> {
   console.info('vizzionpay_webhook_received');
   try {
-    await authenticate(body);
+    await authenticate(body, auth);
   } catch (error) {
     console.warn('vizzionpay_webhook_rejected', error instanceof HttpError ? error.status : 500);
     throw error;
   }
-  const payload = validateVizzionPayPayload(body);
+  let payload;
+  try { payload = validateVizzionPayPayload(body); } catch (error) {
+    console.warn('vizzionpay_webhook_payload_rejected', error instanceof HttpError ? error.status : 500);
+    throw error;
+  }
   if (expectedEvent && payload.event !== expectedEvent) throw new HttpError(400, 'Evento inválido para este endpoint.');
   const t = payload.transaction;
+  if (validVizzionPayCallback(auth)) {
+    if (t.identifier && t.identifier !== auth!.orderId) throw new HttpError(400, 'Pedido divergente.');
+    t.identifier = auth!.orderId;
+  }
+  const savedOrders = await readJson<Order[]>('orders', []);
+  const savedAttempts = await readJson<PixAttempt[]>('pix-attempts', []);
+  const known = savedOrders.find(o => o.payment.provider === 'vizzionpay' && o.payment.providerRef === t.id)
+    || savedAttempts.find(a => a.order.payment.provider === 'vizzionpay' && (a.order.payment.providerRef === t.id || validVizzionPayCallback(auth) && a.order.id === auth!.orderId))?.order;
+  if (known && (Math.round(t.amount * 100) !== Math.round(known.totals.payable * 100)
+      || Math.round(t.originalAmount * 100) !== Math.round(known.totals.payable * 100)
+      || t.currency !== 'BRL' || t.originalCurrency !== 'BRL' || t.identifier && t.identifier !== known.id)) {
+    throw new HttpError(400, 'Notificação de pagamento divergente do pedido.');
+  }
   const receipt: Receipt = {
     event: payload.event, transactionId: t.id, receivedAt: new Date().toISOString(),
     transaction: { paymentMethod: t.paymentMethod, status: t.status, amount: t.amount, currency: t.currency,

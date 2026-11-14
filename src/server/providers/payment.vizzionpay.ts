@@ -1,3 +1,4 @@
+import { signVizzionPayCallback } from '../webhooks/vizzionpay-callback.js';
 import type { PaymentStatus } from '../../shared/types.js';
 import { onlyDigits } from '../../shared/validation.js';
 import { HttpError } from '../errors.js';
@@ -13,6 +14,7 @@ export class VizzionPayPaymentProvider implements PaymentProvider {
     let callbackUrl: URL | undefined;
     if (base) try {
       callbackUrl = new URL('/api/webhooks/vizzionpay', base);
+      signVizzionPayCallback(callbackUrl, input.orderId);
       if (callbackUrl.protocol !== 'https:' || callbackUrl.username || callbackUrl.password) throw new Error();
     } catch { throw new HttpError(503, 'Pagamento Pix em configuração. Tente novamente mais tarde.'); }
     if (!Number.isFinite(input.amount) || input.amount < 0.01) throw new HttpError(400, 'O valor do Pix deve ser de pelo menos R$ 0,01.');
@@ -54,7 +56,7 @@ export class VizzionPayPaymentProvider implements PaymentProvider {
     }
     const expiresAt = typeof data.pix.expiresAt === 'string' ? data.pix.expiresAt : input.expiresAt.toISOString();
     if (!Number.isFinite(Date.parse(expiresAt))) throw new HttpError(502, 'A operadora retornou um prazo de Pix inválido.');
-    if (!(typeof data.webhookToken === 'string' && data.webhookToken) && !process.env.VIZZIONPAY_WEBHOOK_TOKEN) throw new HttpError(502, 'Token de confirmação do Pix indisponível. Aguarde antes de tentar novamente.');
+    if (!(typeof data.webhookToken === 'string' && data.webhookToken) && !process.env.VIZZIONPAY_WEBHOOK_TOKEN && !process.env.VIZZIONPAY_CALLBACK_SECRET) throw new HttpError(502, 'Token de confirmação do Pix indisponível. Aguarde antes de tentar novamente.');
     return { provider: 'vizzionpay', providerRef: data.transactionId, copyPaste: data.pix.code, expiresAt,
       webhookToken: typeof data.webhookToken === 'string' && data.webhookToken ? data.webhookToken : undefined };
   }

@@ -21,8 +21,8 @@ function api<T>(fn: (req: Request) => Promise<T>): RequestHandler {
 }
 
 export const routes = Router();
-routes.post('/webhooks/vizzionpay', api(req => receiveVizzionPayWebhook(req.body, 'TRANSACTION_PAID')));
-routes.post('/webhooks/vizzionpay/paid', api(req => receiveVizzionPayWebhook(req.body, 'TRANSACTION_PAID')));
+routes.post('/webhooks/vizzionpay', api(req => receiveVizzionPayWebhook(req.body, 'TRANSACTION_PAID', { orderId: typeof req.query.orderId === 'string' ? req.query.orderId : undefined, signature: typeof req.query.signature === 'string' ? req.query.signature : undefined })));
+routes.post('/webhooks/vizzionpay/paid', api(req => receiveVizzionPayWebhook(req.body, 'TRANSACTION_PAID', { orderId: typeof req.query.orderId === 'string' ? req.query.orderId : undefined, signature: typeof req.query.signature === 'string' ? req.query.signature : undefined })));
 routes.post('/webhooks/voidpay', api(req => receiveVoidPayWebhook(req.body, 'TRANSACTION_PAID')));
 routes.post('/webhooks/voidpay/created', api(req => receiveVoidPayWebhook(req.body, 'TRANSACTION_CREATED')));
 routes.post('/webhooks/voidpay/paid', api(req => receiveVoidPayWebhook(req.body, 'TRANSACTION_PAID')));

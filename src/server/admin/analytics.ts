@@ -60,7 +60,7 @@ export function summarize(rows: Session[], orders: Order[], from: number, to: nu
   }
   const validOrders = orders.filter(o => Date.parse(o.createdAt) >= from && Date.parse(o.createdAt) < to);
   const generated = validOrders.filter(o => Boolean(o.payment.providerRef && o.payment.charge.copyPaste));
-  const paid = validOrders.filter(o => o.status === 'paid');
+  const paid = orders.filter(o => o.status === 'paid' && Date.parse(o.paidAt || o.createdAt) >= from && Date.parse(o.paidAt || o.createdAt) < to);
   const has = (s: Session, name: string): boolean => name === 'purchase' ? paid.some(o => o.analyticsSessionId === s.id) : name === 'pix_generated' ? generated.some(o => o.analyticsSessionId === s.id) || s.events.some(e => e.name === name) : s.events.some(e => e.name === name);
   const all = [...sessions.values()];
   const funnel = stages.map(([key, label]) => ({ key, label, count: all.filter(s => has(s, key)).length }));

@@ -15,3 +15,9 @@ test('campaign reset filters old activity and orders without deleting their hist
  const data=await report(30,'all','all');assert.equal(data.totals.sessions,1);assert.equal(data.totals.paid,1);assert.equal(data.totals.revenue,50);assert.equal(data.from,new Date(start).toISOString());assert.equal(data.collectionStarted,data.from);
  assert.equal(JSON.parse(await readFile(path.join(dir,'analytics-local.json'))).length,2);assert.equal(JSON.parse(await readFile(path.join(dir,'orders.json'))).length,2);
 });
+
+test('a payment after the reset is counted even if its order was created before the reset',async()=>{
+ const createdAt=new Date(start-1000).toISOString(),paidAt=new Date(start+1000).toISOString();
+ await writeFile(path.join(dir,'orders.json'),JSON.stringify([{id:'late-paid',createdAt,paidAt,status:'paid',items:[],totals:{payable:44.91},payment:{providerRef:'fake',charge:{copyPaste:'fake'}}}]));
+ const d=await report(30,'all','all');assert.equal(d.totals.paid,1);assert.equal(d.totals.revenue,44.91);
+});
