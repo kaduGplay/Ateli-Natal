@@ -1867,5 +1867,39 @@
     "categoryOrder": {
       "promocoes": -1
     }
+  },
+  {
+    "id": "SKU-CORT-400-RGB",
+    "name": "Cortina LED RGB Inteligente 2 × 2 m com 400 LEDs",
+    "price": 49.8,
+    "stock": 534,
+    "active": true,
+    "image": "/uploads/cortina-rgb-400-1-pt.png",
+    "images": [
+      "/uploads/cortina-rgb-400-1-pt.png",
+      "/uploads/cortina-rgb-400-2-pt.png",
+      "/uploads/cortina-rgb-400-4-pt.png",
+      "/uploads/cortina-rgb-400-5-pt.png",
+      "/uploads/cortina-rgb-400-6-pt.png"
+    ],
+    "category": "geral",
+    "order": 1016,
+    "description": "<p>Personalize a decoração com uma cortina RGB de 400 LEDs. Use o aplicativo Bluetooth ou o controle remoto para alternar efeitos. Pelo aplicativo, você pode criar textos e desenhos animados e sincronizar as luzes com música.</p>",
+    "specs": "Dimensões: 2 × 2 m\nQuantidade: 400 LEDs RGB\nComandos: aplicativo Bluetooth e controle remoto\nConteúdo: cortina, controle remoto e manual",
+    "isBestSeller": false,
+    "bestSellerOrder": 999,
+    "isOrderBump": false,
+    "orderBumpOrder": 999,
+    "freeShippingEligible": false,
+    "urgencyCopy": "",
+    "crossSell": [],
+    "variations": [],
+    "features": [
+      "Textos, desenhos e efeitos personalizáveis",
+      "Modo musical",
+      "Controle por aplicativo Bluetooth ou controle remoto"
+    ],
+    "salesCount": 0,
+    "hasGift": false
   }
 ]
