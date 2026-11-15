@@ -1914,15 +1914,15 @@
     "oldPrice": null,
     "stock": 1180,
     "active": true,
-    "image": "/products/varanda-pixel/varanda-pixel-1-pt.svg",
+    "image": "/products/varanda-pixel/varanda-pixel-1-pt.png",
     "images": [
-      "/products/varanda-pixel/varanda-pixel-1-pt.svg",
-      "/products/varanda-pixel/varanda-pixel-2-pt.svg",
-      "/products/varanda-pixel/varanda-pixel-3-pt.svg"
+      "/products/varanda-pixel/varanda-pixel-1-pt.png",
+      "/products/varanda-pixel/varanda-pixel-2-pt.png",
+      "/products/varanda-pixel/varanda-pixel-3-pt.png"
     ],
     "category": "piscas",
     "order": 1017,
-    "description": "<div class=\"premium-desc-v4 pdp-pro-description\"><div class=\"section-light\"><div class=\"super-title\">ILUMINAÇÃO DE NATAL</div><h2 class=\"main-title\">Sua varanda em clima de Natal</h2><div class=\"desc-text\"><p>A <strong>Cortina LED Pixel Inteligente para Varanda</strong> cria cenas luminosas para decorar varandas, janelas e fachadas. Escolha o tamanho ideal para o seu espaço e controle os efeitos pelo aplicativo, conforme os recursos indicados pelo fornecedor.</p></div><img class=\"placeholder-media\" src=\"/products/varanda-pixel/varanda-pixel-1-pt.svg\" alt=\"Cortina LED Pixel iluminando uma varanda\" loading=\"lazy\"></div><div class=\"section-dark\"><h2 class=\"main-title dark\">Cenas para deixar a decoração mais viva</h2><p class=\"desc-text dark\">As artes do produto mostram motivos como Papai Noel, árvore, rena, floco de neve e mensagens natalinas. Use o aplicativo para explorar os efeitos e compor a atmosfera da sua casa.</p></div><div class=\"section-light\"><img class=\"placeholder-media\" src=\"/products/varanda-pixel/varanda-pixel-2-pt.svg\" alt=\"Detalhes de instalação e controle pelo aplicativo\" loading=\"lazy\"><h2 class=\"main-title\">Escolha seu tamanho</h2><p class=\"desc-text\">Disponível em <strong>Médio (1,8 m)</strong> e <strong>Grande (2,1 m)</strong>. Antes de instalar, confira as instruções da embalagem e mantenha tomadas, fonte e conexões protegidas de umidade.</p><div class=\"care-card\"><div class=\"care-content\"><h4>Controle e instalação</h4><p>O fornecedor informa controle pelo aplicativo e instalação prática. Faça a montagem com o produto desconectado da energia e siga o manual recebido.</p></div></div></div></div>",
+    "description": "<div class=\"premium-desc-v4 pdp-pro-description\"><div class=\"section-light\"><div class=\"super-title\">ILUMINAÇÃO DE NATAL</div><h2 class=\"main-title\">Sua varanda em clima de Natal</h2><div class=\"desc-text\"><p>A <strong>Cortina LED Pixel Inteligente para Varanda</strong> cria cenas luminosas para decorar varandas, janelas e fachadas. Escolha o tamanho ideal para o seu espaço e controle os efeitos pelo aplicativo, conforme os recursos indicados pelo fornecedor.</p></div><img class=\"placeholder-media\" src=\"/products/varanda-pixel/varanda-pixel-1-pt.png\" alt=\"Cortina LED Pixel iluminando uma varanda\" loading=\"lazy\"></div><div class=\"section-dark\"><h2 class=\"main-title dark\">Cenas para deixar a decoração mais viva</h2><p class=\"desc-text dark\">As artes do produto mostram motivos como Papai Noel, árvore, rena, floco de neve e mensagens natalinas. Use o aplicativo para explorar os efeitos e compor a atmosfera da sua casa.</p></div><div class=\"section-light\"><img class=\"placeholder-media\" src=\"/products/varanda-pixel/varanda-pixel-2-pt.png\" alt=\"Detalhes de instalação e controle pelo aplicativo\" loading=\"lazy\"><h2 class=\"main-title\">Escolha seu tamanho</h2><p class=\"desc-text\">Disponível em <strong>Médio (1,8 m)</strong> e <strong>Grande (2,1 m)</strong>. Antes de instalar, confira as instruções da embalagem e mantenha tomadas, fonte e conexões protegidas de umidade.</p><div class=\"care-card\"><div class=\"care-content\"><h4>Controle e instalação</h4><p>O fornecedor informa controle pelo aplicativo e instalação prática. Faça a montagem com o produto desconectado da energia e siga o manual recebido.</p></div></div></div></div>",
     "specs": "Tipo: cortina LED pixel decorativa\nVariações: Médio (1,8 m) e Grande (2,1 m)\nControle: aplicativo, conforme informado pelo fornecedor\nUso sugerido: decoração de varandas, janelas e fachadas\nConteúdo e especificações elétricas: conferir embalagem e manual do produto",
     "isBestSeller": false,
     "bestSellerOrder": 999,
@@ -1937,12 +1937,12 @@
         "options": [
           {
             "name": "Médio (1,8 m)",
-            "image": "/products/varanda-pixel/varanda-pixel-1-pt.svg",
+            "image": "/products/varanda-pixel/varanda-pixel-1-pt.png",
             "stock": 590
           },
           {
             "name": "Grande (2,1 m)",
-            "image": "/products/varanda-pixel/varanda-pixel-2-pt.svg",
+            "image": "/products/varanda-pixel/varanda-pixel-2-pt.png",
             "stock": 590
           }
         ]
