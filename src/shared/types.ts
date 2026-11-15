@@ -3,6 +3,8 @@
 export interface ProductVariationOption {
   name: string;
   image?: string;
+  /** Estoque específico da opção, quando o produto possui variações físicas. */
+  stock?: number;
 }
 
 export interface ProductVariationGroup {

@@ -22,6 +22,11 @@ export function buildOrderItems(
     const qty = Math.floor(Number(line.qty));
     if (!Number.isFinite(qty) || qty < 1 || qty > 99) throw new HttpError(400, `Quantidade inválida para ${product.name}.`);
     if (product.stock < qty) throw new HttpError(409, `Estoque insuficiente para ${product.name}.`);
+    const optionStock = (product.variations ?? [])
+      .flatMap(group => group.options.map(option => ({ group, option })))
+      .find(({ group, option }) => String(line.variant ?? '').includes(`${group.group_name}: ${option.name}`))
+      ?.option.stock;
+    if (optionStock !== undefined && optionStock < qty) throw new HttpError(409, `Estoque insuficiente para a variação selecionada de ${product.name}.`);
     if (line.isBump && !product.isOrderBump) throw new HttpError(400, `${product.name} não é uma oferta especial.`);
 
     const unitPrice = line.isBump ? round2(product.price * (1 - settings.orderBumpDiscountPercent / 100)) : product.price;

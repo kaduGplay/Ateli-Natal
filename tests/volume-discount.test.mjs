@@ -12,6 +12,14 @@ test('25% curtain offer starts at two units, combines variants and never discoun
  assert.equal(computeTotals([{...curtain,qty:2}],[{type:'fixed',value:500}],0,0).payable,0);
 });
 
+test('balcony pixel offer charges R$ 99,90 for two and keeps that promotional unit price at three',()=>{
+ const balcony = {productId:'SKU-VARANDA-PIXEL',qty:1,unitPrice:69.9,isBump:false};
+ assert.equal(computeTotals([balcony],[],0,0).discount,0);
+ assert.deepEqual(computeTotals([{...balcony,qty:2}],[],0,0),{subtotal:139.8,discount:39.9,shipping:0,total:99.9,pixDiscount:0,payable:99.9});
+ assert.deepEqual(computeTotals([{...balcony,qty:3}],[],0,0),{subtotal:209.7,discount:59.85,shipping:0,total:149.85,pixDiscount:0,payable:149.85});
+ assert.equal(computeTotals([{...balcony,qty:2,isBump:true}],[],0,0).discount,0);
+});
+
 test('cart discount updates when quantity changes from one to two and back',async()=>{
  const {build}=await import('esbuild'); const vm=await import('node:vm');
  const result=await build({entryPoints:['src/client/cart/store.ts'],bundle:true,write:false,format:'cjs',platform:'browser',plugins:[{name:'test-tracking',setup(build){build.onResolve({filter:/lib\/(pixel|funnel)$/},args=>({path:args.path,namespace:'tracking'}));build.onLoad({filter:/.*/,namespace:'tracking'},()=>({contents:'export const pixel={addToCart(){}}; export function trackFunnel(){};'}));}}]});

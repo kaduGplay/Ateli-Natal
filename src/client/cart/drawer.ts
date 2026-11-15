@@ -4,6 +4,7 @@ import { byId, esc, qs, qsa } from '../lib/dom';
 import { brl, getStoreSettings } from '../lib/format';
 import { addBump, renderOrderBumps } from './bumps';
 import { cart } from './store';
+import { volumeOffer } from '../../shared/volume-discount';
 import { maskCep } from '../lib/masks';
 import { onlyDigits } from '../../shared/validation';
 
@@ -89,7 +90,10 @@ export function renderDrawer(): void {
   if (volumeRow) {
     volumeRow.hidden = !cart.volumeDiscount();
     volumeRow.style.display = cart.volumeDiscount() ? 'flex' : 'none';
-    volumeRow.innerHTML = `<span>25% de desconto aplicado</span><strong>− ${brl(cart.volumeDiscount())}</strong>`;
+    const offer = volumeOffer(lines.map(line => ({ ...line, unitPrice: line.price })));
+    volumeRow.innerHTML = offer
+      ? `<span>${offer.label} aplicado</span><strong>− ${brl(offer.savings)}</strong>`
+      : `<span>25% de desconto aplicado</span><strong>− ${brl(cart.volumeDiscount())}</strong>`;
   }
 
   renderFreeShippingBar(total);

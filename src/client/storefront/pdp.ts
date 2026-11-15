@@ -1,4 +1,4 @@
-import { volumeDiscount } from '../../shared/volume-discount';
+import { volumeDiscount, volumeOffer } from '../../shared/volume-discount';
 import { CURTAIN_PRODUCT_ID } from '../../shared/meta-pixels';
 import type { Product, ProductVariationGroup, ProductVariationOption } from '../../shared/types';
 import { api, ApiError } from '../lib/api';
@@ -180,12 +180,15 @@ function updateQuantityOffer(): void {
   const qty = Math.max(1, parseInt(must<HTMLInputElement>('pdpQty').value, 10) || 1);
   const discount = volumeDiscount([{ productId: current.id, qty, unitPrice: current.price }]);
   const total = Math.round((current.price * qty - discount) * 100) / 100;
+  const offer = volumeOffer([{ productId: current.id, qty, unitPrice: current.price }]);
   status.hidden = !discount;
-  status.innerHTML = discount ? `<strong>25% de desconto aplicado!</strong><br><s>${brl(current.price * qty)}</s> · <strong>${qty} cortinas por ${brl(total)}</strong><br>Você economiza ${brl(discount)}. Valor antes do frete e do desconto de Pix.` : '';
+  status.innerHTML = discount ? offer
+    ? `<strong>${offer.label} aplicado!</strong><br><s>${brl(current.price * qty)}</s> · <strong>${qty} unidades por ${brl(total)}</strong><br>Você economiza ${brl(discount)}. Valor antes do frete e do desconto de Pix.`
+    : `<strong>25% de desconto aplicado!</strong><br><s>${brl(current.price * qty)}</s> · <strong>${qty} cortinas por ${brl(total)}</strong><br>Você economiza ${brl(discount)}. Valor antes do frete e do desconto de Pix.` : '';
   const stickyPrice = byId('pdpStickyPrice');
   const stickyLabel = byId('pdpStickyPriceLabel');
   if (stickyPrice) stickyPrice.textContent = brl(discount ? total : current.price);
-  if (stickyLabel) stickyLabel.textContent = discount ? `Total de ${qty} unidades · 25% OFF` : 'Preço por unidade';
+  if (stickyLabel) stickyLabel.textContent = discount ? offer ? `Total de ${qty} unidades · oferta aplicada` : `Total de ${qty} unidades · 25% OFF` : 'Preço por unidade';
 }
 
 export function changeQty(delta: number): void {
